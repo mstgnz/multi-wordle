@@ -9,13 +9,13 @@ The way of playing with the Word you know does not change the same.
 There is only a two-player version and a scoring system. Each player takes turns guessing. The scoring system determines the winner.
 
 ### Features
--[ ] At the beginning of the game, the number of words to be played with the language option and word lengths can be set.  
--[ ] 5 points for finding the correct letter in the word.  
--[ ] 2 points for finding the letter in the word but misplacing it.  
--[ ] If a player finds the letter in the word and the location is wrong and the next player sees the letter and locates it correctly, then 3 points from 5-2.  
--[ ] if there is no letter in the word, no penalty for the first use but -1 point for the second use.  
--[ ] If the player whose turn it is does not answer within 10 seconds, it passes to the next player. -5 points penalty for repetition.  
--[ ] if a word that is not in the language used is used -2 points, if the same word is used again -4 points. (control with an api service) or there can be defined word sets. I haven't decided yet.
+- [ ] At the beginning of the game, the number of words to be played with the language option and word lengths can be set.  
+- [ ] 5 points for finding the correct letter in the word.  
+- [ ] 2 points for finding the letter in the word but misplacing it.  
+- [ ] If a player finds the letter in the word and the location is wrong and the next player sees the letter and locates it correctly, then 3 points from 5-2.  
+- [ ] if there is no letter in the word, no penalty for the first use but -1 point for the second use.  
+- [ ] If the player whose turn it is does not answer within 10 seconds, it passes to the next player. -5 points penalty for repetition.  
+- [ ] if a word that is not in the language used is used -2 points, if the same word is used again -4 points. (control with an api service) or there can be defined word sets. I haven't decided yet.
 
 ## Getting Started
 
