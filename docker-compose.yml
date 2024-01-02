@@ -1,0 +1,11 @@
+version: "3.5"
+
+services:
+  multi-wordle:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: multi-wordle
+    restart: always
+    ports:
+      - "3000:3000"
