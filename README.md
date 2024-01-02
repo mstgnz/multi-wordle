@@ -1,12 +1,12 @@
 # Multi Wordle
 
-The way of playing with the Word you know does not change the same.
+It's the same Wordle game, the way of playing doesn't change.
 
 ### Standard way of playing
 - Each guess must be a correct 5-letter word. Press enter to submit.
 - After each guess the colors of the boxes will change according to the closeness of your guess.
 
-There is only a two-player version and a scoring system. Each player takes turns guessing. The scoring system determines the winner.
+There is only a two-player version with websocket and a scoring system. Each player takes turns guessing. The scoring system determines the winner.
 
 ### Features
 - [ ] At the beginning of the game, the number of words to be played with the language option and word lengths can be set.  
