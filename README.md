@@ -24,14 +24,13 @@ Follow the steps below to start the project locally or on a web server.
 ### Prerequisites
 
 - Install the Go programming language locally.
-- Make sure your browser supports WebSocket.
 
 ### Installation
 
 1. Clone this repository to a local directory:
     ```bash
     git clone https://github.com/mstgnz/multi-wordle
-    cd go-socket
+    cd multi-wordle
     ```
 
 2. Run project
