@@ -1,10 +1,18 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 
 	"golang.org/x/net/websocket"
+)
+
+var ROOMS []*Room
+var WORDS []string
+
+const (
+	EnglishAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	TurkishAlphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 )
 
 func main() {
@@ -15,10 +23,8 @@ func main() {
 	socket := NewSocket()
 	http.Handle("/ws", websocket.Handler(socket.Handler))
 
-	done := make(chan bool)
-	go func() {
-		panic(http.ListenAndServe(":"+port, nil))
-	}()
-	log.Println("Started Websocket on :" + port)
-	<-done
+	err := http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		fmt.Println("Web socket failed to start:", err)
+	}
 }
