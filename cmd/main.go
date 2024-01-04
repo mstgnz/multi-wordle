@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"golang.org/x/net/websocket"
 )
@@ -18,18 +19,18 @@ const (
 	EnglishAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	TurkishAlphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 	MaxConnection   = 48
+	Port            = 3000
 )
 
 func main() {
-	port := "3000"
 
 	http.Handle("/", http.FileServer(http.Dir("public")))
 
 	socket := NewSocket()
 	http.Handle("/ws", websocket.Handler(socket.Handler))
-	
-	log.Println("Started Websocket on :" + port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+
+	log.Println("Started Websocket on :", Port)
+	if err := http.ListenAndServe(":"+strconv.Itoa(Port), nil); err != nil {
 		log.Fatal("HTTP server error:", err)
 	}
 
