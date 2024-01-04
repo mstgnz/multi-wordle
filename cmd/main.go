@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"golang.org/x/net/websocket"
@@ -27,9 +27,10 @@ func main() {
 
 	socket := NewSocket()
 	http.Handle("/ws", websocket.Handler(socket.Handler))
-
-	err := http.ListenAndServe(":"+port, nil)
-	if err != nil {
-		fmt.Println("Web socket failed to start:", err)
+	
+	log.Println("Started Websocket on :" + port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatal("HTTP server error:", err)
 	}
+
 }
