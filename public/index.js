@@ -1,6 +1,10 @@
+/*
+## License
+This project is licensed under the MIT Licence. Refer to https://github.com/mstgnz/multi-wordle/blob/main/LICENSE for more information.
+*/
 class MultiWordle {
     constructor() {
-        this.players = [];
+        this.room = null;
         this.messages = [];
         this.objSize = 0;
         this.isAnimate = false;
@@ -15,9 +19,6 @@ class MultiWordle {
         this.form.addEventListener("submit", (event) => {
             event.preventDefault()
         })
-        this.player = {
-            name: Math.random().toString(36).replace(/[^a-z]+/g, '').substring(0, 5)
-        }
         this.socket = new WebSocket("ws://localhost:3000/ws")
         this.socketProcess()
     }
@@ -26,18 +27,15 @@ class MultiWordle {
 
         // on open
         this.socket.onopen = () => {
-            this.send("new")
+            this.send("login")
         }
 
         // on message
         this.socket.onmessage = (event) => {
             const response = JSON.parse(event.data)
-            //console.log(response)
+            console.log(response)
             switch (response.type) {
-                case "init":
-                    this.handleInit(response)
-                    break
-                case "new":
+                case "login":
                     this.handleNewPlayer(response)
                     break
                 case "animate":
@@ -71,34 +69,9 @@ class MultiWordle {
         }
     }
 
-    handleInit(response) {
-        this.handlePlayers(response)
-        this.handleMessages(response)
-    }
-
-    handlePlayers(response){
-        this.players = response.players ? response.players : []
-        response.players.forEach((player) => {
-            if (player.name === this.player.name) {
-                this.player = player;
-            }
-            this.addPlayerToGameArea(player)
-        })
-    }
-
-    handleMessages(response) {
-        this.messages = response.messages ? response.messages : []
-        if(response.messages){
-            response.messages.forEach(message => {
-                this.addMessageToChat(`${message.name}: ${message.message}`)
-            })
-        }
-        this.scrollTop()
-    }
-
     handleNewPlayer(response) {
+        this.room = response.room
         if(this.player.name !== response.player.name){
-            this.players.push(response.player)
             this.addPlayerToGameArea(response.player)
             this.addMessageToChat(`[SERVER] ${response.player.name} connected`)
             this.scrollTop()
@@ -121,6 +94,12 @@ class MultiWordle {
         }
     }
 
+    handleError(response){
+        this.connected.style.display = "none"
+        this.unconnected.style.display = "block"
+        this.unconnected.innerHTML = response.message
+    }
+
     handleName(response) {
         if (response.player.name !== this.player.name) {
             const player = this.players.find((player) => player.name === response.player.name)
@@ -135,12 +114,6 @@ class MultiWordle {
         this.players = this.players.filter((p) => p.name !== response.player.name);
         this.addMessageToChat(`[SERVER]: ${response.player.name} disconnected`)
         this.scrollTop()
-    }
-
-    handleError(response){
-        this.connected.style.display = "none"
-        this.unconnected.style.display = "block"
-        this.unconnected.innerHTML = response.message
     }
 
     scrollTop() {
@@ -163,8 +136,7 @@ class MultiWordle {
         this.socket.send(
             JSON.stringify({
                 type: type,
-                message: message,
-                player: this.player
+                message: message
             })
         )
     }

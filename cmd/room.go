@@ -15,6 +15,8 @@ type Room struct {
 	ID string `json:"id"`
 	// Word Length
 	Length int `json:"length"`
+	// Messages intra-room correspondence
+	Messages []string `json:"messages"`
 	// Wordle It provides the word to be guessed and the necessary checks and coloring for each guess.
 	Wordle Wordle `json:"wordle"`
 	// Players It holds the users in the room. 2 users.
@@ -53,4 +55,9 @@ func NewRoom(lang string, length int) *Room {
 
 	ROOMS = append(ROOMS, newRoom)
 	return newRoom
+}
+
+// AddMessage append message
+func (r *Room) AddMessage(message string) {
+	r.Messages = append(r.Messages, message)
 }

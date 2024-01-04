@@ -44,6 +44,8 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 			s.changeNameHandle(ws)
 		case "wordle":
 			s.wordleHandle(ws)
+		case "chat":
+			s.messageHandle(ws)
 		default:
 			HandleLog("invalid type: "+request.Type, nil)
 			s.emit(ws, Response{Type: "error", Message: "invalid type: " + request.Type})
@@ -62,10 +64,7 @@ func (s *Socket) emit(ws *websocket.Conn, response Response) {
 // broadcast The user receiving the action performs an emit operation to the user in the room to which it belongs.
 func (s *Socket) broadcast(conn *websocket.Conn, response Response) {
 	for ws := range ROOMS.FindRoom(conn).Players {
-		// emit to the other user in the room.
-		if ws != conn {
-			s.emit(ws, response)
-		}
+		s.emit(ws, response)
 	}
 }
 
@@ -75,8 +74,7 @@ func (s *Socket) loginHandle(ws *websocket.Conn) {
 	room := NewRoom("en", 5)
 	room.Players[ws] = player
 	HandleLog(player.Name+" connected", nil)
-	s.emit(ws, Response{Type: "init", Message: "login successfully", Room: room})
-	s.broadcast(ws, Response{Type: request.Type, Message: "new player connected"})
+	s.broadcast(ws, Response{Type: request.Type, Message: "new player connected", Room: room})
 }
 
 // changeNameHandle If a change name emit is received by the client, change the name of the corresponding user.
@@ -89,8 +87,22 @@ func (s *Socket) changeNameHandle(conn *websocket.Conn) {
 }
 
 // wordleHandle word predictions operations
-func (s *Socket) wordleHandle(_ *websocket.Conn) {
+func (s *Socket) wordleHandle(conn *websocket.Conn) {
+	if room := ROOMS.FindRoom(conn); room != nil {
+		room.Players[conn].AddWordToGuess(request.Message)
+		room.Wordle.CheckWord(request.Message)
+		s.broadcast(conn, Response{Type: request.Type, Message: "new wordle", Room: room})
+	}
+}
 
+// messageHandle Messages intra-room correspondence
+func (s *Socket) messageHandle(conn *websocket.Conn) {
+	if room := ROOMS.FindRoom(conn); room != nil {
+		player := room.Players[conn]
+		message := fmt.Sprintf("%s: %s", player.Name, request.Message)
+		room.AddMessage(message)
+		s.broadcast(conn, Response{Type: request.Type, Message: "new message", Room: room})
+	}
 }
 
 // limitHandle game max limit
@@ -102,16 +114,13 @@ func (s *Socket) limitHandle(_ *websocket.Conn) error {
 }
 
 // disconnect
-func (s *Socket) disconnect(ws *websocket.Conn) {
-	/*msg := fmt.Sprintf("%s disconnected", request.Player.Name)
-	HandleLog(msg, nil)
-	s.connections[ws] = false
-	players.DelPlayer(request.Player.Name)
-	delete(s.connections, ws)
-	s.broadcast(Response{
-		Type:    "disconnect",
-		Message: msg,
-		Player:  request.Player,
-	})*/
-	_ = ws.Close()
+func (s *Socket) disconnect(conn *websocket.Conn) {
+	if room := ROOMS.FindRoom(conn); room != nil {
+		player := room.Players[conn]
+		msg := fmt.Sprintf("%s disconnected", player.Name)
+		HandleLog(msg, nil)
+		PLAYERS.DelPlayer(conn)
+		s.broadcast(conn, Response{Type: "disconnect", Message: msg, Room: room})
+		_ = conn.Close()
+	}
 }

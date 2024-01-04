@@ -8,15 +8,18 @@
 </head>
 <body>
 
-<div id="connected">
-    <div id="board"></div>
-    <form id="form">
-        <label for="input"></label>
-        <input type="text" maxlength="100" minlength="1" id="input" placeholder="Send Word" autofocus="autofocus" />
-    </form>
-</div>
-<h1 id="unconnected">Websocket Not Connected</h1>
+    <div id="connected">
+        <div id="game"></div>
+        <div id="chat"></div>
+        <form id="form">
+            <label for="input"></label>
+            <input type="text" maxlength="100" minlength="1" id="input" placeholder="Send Message" autofocus="autofocus" />
+        </form>
+    </div>
 
-<script src="index.js"></script>
+    <h1 id="unconnected">Websocket Not Connected</h1>
+    
+    <script src="index.js"></script>
+
 </body>
 </html>
