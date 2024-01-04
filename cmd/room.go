@@ -14,7 +14,9 @@ type Room struct {
 	// Room ID
 	ID string `json:"id"`
 	// Word Length
-	Length int `json:"length"`
+	Length int `json:"len"`
+	// Trial number of trials
+	Trial int `json:"trial"`
 	// Messages intra-room correspondence
 	Messages []string `json:"messages"`
 	// Wordle It provides the word to be guessed and the necessary checks and coloring for each guess.
@@ -30,7 +32,7 @@ type Room struct {
 // NewRoom When a user is connected, if there is a room with 1 user,
 // the user will enter that room, if not,
 // a new room will be created and the user will enter there.
-func NewRoom(lang string, length int) *Room {
+func NewRoom(lang string, length, trial int) *Room {
 
 	for _, room := range ROOMS {
 		if len(room.Players) < 2 {
@@ -47,6 +49,7 @@ func NewRoom(lang string, length int) *Room {
 		ID:      fmt.Sprintf("room_%d", len(ROOMS)+1),
 		Players: make(map[*websocket.Conn]*Player),
 		Length:  length,
+		Trial:   trial,
 		Wordle: Wordle{
 			Word:     getWord,
 			Alphabet: SetAlphabet(lang),

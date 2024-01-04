@@ -40,8 +40,8 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 		switch request.Type {
 		case "login":
 			s.loginHandle(ws)
-		case "change-name":
-			s.changeNameHandle(ws)
+		case "name":
+			s.nameHandle(ws)
 		case "wordle":
 			s.wordleHandle(ws)
 		case "chat":
@@ -71,14 +71,15 @@ func (s *Socket) broadcast(conn *websocket.Conn, response Response) {
 // loginHandle If login emit is received by the client, create a new user and assign it to the room.
 func (s *Socket) loginHandle(ws *websocket.Conn) {
 	player := NewPlayer(ws)
-	room := NewRoom("en", 5)
+	room := NewRoom("en", 5, 5)
 	room.Players[ws] = player
-	HandleLog(player.Name+" connected", nil)
-	s.broadcast(ws, Response{Type: request.Type, Message: "new player connected", Room: room})
+	message := fmt.Sprintf("%s: connected", player.Name)
+	HandleLog(message, nil)
+	s.broadcast(ws, Response{Type: request.Type, Message: message, Room: room})
 }
 
-// changeNameHandle If a change name emit is received by the client, change the name of the corresponding user.
-func (s *Socket) changeNameHandle(conn *websocket.Conn) {
+// nameHandle If a change name emit is received by the client, change the name of the corresponding user.
+func (s *Socket) nameHandle(conn *websocket.Conn) {
 	if player := PLAYERS.FindPlayer(conn); player != nil {
 		message := fmt.Sprintf("%s changed its name to %s", player.Name, request.Message)
 		player.SetName(request.Message)

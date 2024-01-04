@@ -16,8 +16,8 @@ var ROOMS Rooms
 var PLAYERS Players
 
 const (
-	EnglishAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	TurkishAlphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+	EnglishAlphabet = "QWERTYUIOPASDFGHJKLZXCVBNM"
+	TurkishAlphabet = "ERTYUIOPĞÜASDFGHJKLŞİZCVBNMÖÇ"
 	MaxConnection   = 48
 	Port            = 3000
 )
