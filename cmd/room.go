@@ -47,7 +47,7 @@ func NewRoom(lang string, length int) *Room {
 		Length:  length,
 		Wordle: Wordle{
 			Word:     getWord,
-			Alphabet: SetAlphabet("en"),
+			Alphabet: SetAlphabet(lang),
 		},
 	}
 

@@ -5,7 +5,6 @@ import (
 )
 
 type Player struct {
-	ID          int
 	Name        string
 	Score       int
 	WordToGuess []string
@@ -31,7 +30,6 @@ func (p *Player) AddWordToGuess(guess string) {
 
 func NewPlayer(conn *websocket.Conn) *Player {
 	player := &Player{
-		ID:          len(PLAYERS) + 1,
 		Name:        RandomName(5),
 		Score:       0,
 		WordToGuess: nil,
