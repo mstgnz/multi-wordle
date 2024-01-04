@@ -23,7 +23,7 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 		s.disconnect(ws)
 	}(ws)
 
-	if err := s.limitHandle(ws); err != nil {
+	if err := s.limitHandle(); err != nil {
 		s.emit(ws, Response{Type: "error", Message: err.Error()})
 		return
 	}
@@ -106,7 +106,7 @@ func (s *Socket) messageHandle(conn *websocket.Conn) {
 }
 
 // limitHandle game max limit
-func (s *Socket) limitHandle(_ *websocket.Conn) error {
+func (s *Socket) limitHandle() error {
 	if len(PLAYERS) > MaxConnection {
 		return errors.New("maximum limit reached")
 	}
