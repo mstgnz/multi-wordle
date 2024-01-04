@@ -160,7 +160,7 @@ span.change a{
     width: 60%;
     display: flex;
     flex-wrap: wrap;
-    margin: 0 auto;
+    margin: 40px auto 0;
     justify-content: center;
 }
 #alphabet .alphabet-row {
