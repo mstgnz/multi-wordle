@@ -54,7 +54,7 @@ body{
     bottom: 11%;
     left: 30%;
     width: 40%;
-    height: 88%;
+    height: 38%;
     overflow-y: auto;
     z-index: -1;
 }
@@ -124,4 +124,57 @@ span.change a{
     font-size: 40px;
     text-align: center;
     text-shadow: 2px 2px #000;
+}
+
+#wordle{
+    position: absolute;
+    bottom: 49%;
+    left: 30%;
+    width: 40%;
+    height: 50%;
+    z-index: -1;
+}
+#wordle-box{
+    width: 40%;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    justify-content: center;
+}
+#wordle-box .wordle-row {
+    display: flex;
+    justify-content: space-around;
+}
+#wordle-box .wordle-item {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    background-color: white;
+    text-align: center;
+    line-height: 40px;
+    font-size: 1.2em;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+#alphabet{
+    width: 60%;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    justify-content: center;
+}
+#alphabet .alphabet-row {
+    display: flex;
+    justify-content: space-around;
+}
+#alphabet .alphabet-item {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    background-color: white;
+    text-align: center;
+    line-height: 40px;
+    font-size: 1.2em;
+    border: 1px solid #ccc;
+    cursor: pointer;
 }
