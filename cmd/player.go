@@ -1,11 +1,16 @@
 package main
 
+import (
+	"golang.org/x/net/websocket"
+)
+
 type Player struct {
 	ID          int
 	Name        string
 	Score       int
 	WordToGuess []string
 	IsGuessing  bool
+	Conn        *websocket.Conn
 }
 
 func (p *Player) SetName(name string) {
@@ -22,4 +27,18 @@ func (p *Player) SetIsGuessing(isGuessing bool) {
 
 func (p *Player) AddWordToGuess(guess string) {
 	p.WordToGuess = append(p.WordToGuess, guess)
+}
+
+func NewPlayer(conn *websocket.Conn) *Player {
+	player := &Player{
+		ID:          len(PLAYERS) + 1,
+		Name:        RandomName(5),
+		Score:       0,
+		WordToGuess: nil,
+		IsGuessing:  false,
+		Conn:        conn,
+	}
+
+	PLAYERS = append(PLAYERS, player)
+	return player
 }

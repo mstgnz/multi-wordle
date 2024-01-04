@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	crtpto "crypto/rand"
 	"errors"
 	"fmt"
 	"log"
@@ -123,4 +124,17 @@ func ExistsLetter(word string, letter byte) bool {
 		}
 	}
 	return false
+}
+
+// RandomName returns a random string of letters of length n, using characters specified in randomStringSource.
+func RandomName(n int) string {
+	// randomStringSource is the source for generating random strings.
+	const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321_"
+	s, r := make([]rune, n), []rune(randomStringSource)
+	for i := range s {
+		p, _ := crtpto.Prime(crtpto.Reader, len(r))
+		x, y := p.Uint64(), uint64(len(r))
+		s[i] = r[x%y]
+	}
+	return string(s)
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
 
 	"golang.org/x/net/websocket"
@@ -9,17 +10,13 @@ import (
 
 var request Request
 
-type Socket struct {
-	connections map[*websocket.Conn]bool
-	Room
-}
+type Socket struct{}
 
 func NewSocket() *Socket {
-	return &Socket{
-		connections: make(map[*websocket.Conn]bool),
-	}
+	return &Socket{}
 }
 
+// Handler handle incoming requests from the client.
 func (s *Socket) Handler(ws *websocket.Conn) {
 
 	defer func(ws *websocket.Conn) {
@@ -28,7 +25,7 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 
 	if err := s.limitHandle(ws); err != nil {
 		s.emit(ws, Response{Type: "error", Message: err.Error()})
-		delete(s.connections, ws)
+		return
 	}
 
 	for {
@@ -40,16 +37,13 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 			s.emit(ws, Response{Type: "error", Message: err.Error()})
 			continue
 		}
-		s.connections[ws] = true
 		switch request.Type {
-		case "new":
-			s.newHandle(ws)
-		case "message":
-			s.messageHandle(ws)
-		case "animate":
-			s.animateHandle(ws)
-		case "name":
-			s.nameHandle(ws)
+		case "login":
+			s.loginHandle(ws)
+		case "change-name":
+			s.changeNameHandle(ws)
+		case "wordle":
+			s.wordleHandle(ws)
 		default:
 			HandleLog("invalid type: "+request.Type, nil)
 			s.emit(ws, Response{Type: "error", Message: "invalid type: " + request.Type})
@@ -57,6 +51,7 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 	}
 }
 
+// emit Performs emit operation to the user taking action
 func (s *Socket) emit(ws *websocket.Conn, response Response) {
 	err := websocket.JSON.Send(ws, response)
 	if err != nil {
@@ -64,56 +59,49 @@ func (s *Socket) emit(ws *websocket.Conn, response Response) {
 	}
 }
 
-func (s *Socket) broadcast(response Response) {
-	for ws := range s.connections {
-		if s.connections[ws] {
-			// TODO to many connection handle
-			go func(ws *websocket.Conn) {
-				s.emit(ws, response)
-			}(ws)
+// broadcast The user receiving the action performs an emit operation to the user in the room to which it belongs.
+func (s *Socket) broadcast(conn *websocket.Conn, response Response) {
+	for ws := range ROOMS.FindRoom(conn).Players {
+		// emit to the other user in the room.
+		if ws != conn {
+			s.emit(ws, response)
 		}
 	}
 }
 
-func (s *Socket) newHandle(ws *websocket.Conn) {
-	/*player := players.AddPlayer(types.Player{
-		Color:    RandomColor(),
-		Name:     request.Player.Name,
-		Position: types.Position{X: 0, Y: 0},
-	})
-	HandleLog(request.Player.Name+" connected", nil)
-	s.emit(ws, Response{Type: "init", Message: "login successfully", Player: player, Players: players, Messages: messages})
-	s.broadcast(Response{Type: request.Type, Message: "new player connected", Player: player, Messages: messages})*/
+// loginHandle If login emit is received by the client, create a new user and assign it to the room.
+func (s *Socket) loginHandle(ws *websocket.Conn) {
+	player := NewPlayer(ws)
+	room := NewRoom("en", 5)
+	room.Players[ws] = player
+	HandleLog(player.Name+" connected", nil)
+	s.emit(ws, Response{Type: "init", Message: "login successfully", Room: room})
+	s.broadcast(ws, Response{Type: request.Type, Message: "new player connected"})
 }
 
-func (s *Socket) messageHandle(_ *websocket.Conn) {
-	/*messages = append(messages, types.Message{Name: request.Player.Name, Message: request.Message})
-	if player := players.FindPlayer(request.Player.Name); player != nil {
-		s.broadcast(Response{Type: request.Type, Message: request.Message, Player: *player})
-	}*/
+// changeNameHandle If a change name emit is received by the client, change the name of the corresponding user.
+func (s *Socket) changeNameHandle(conn *websocket.Conn) {
+	if player := PLAYERS.FindPlayer(conn); player != nil {
+		message := fmt.Sprintf("%s changed its name to %s", player.Name, request.Message)
+		player.SetName(request.Message)
+		s.broadcast(conn, Response{Type: request.Type, Message: message})
+	}
 }
 
-func (s *Socket) animateHandle(_ *websocket.Conn) {
-	/*if player := players.FindPlayer(request.Player.Name); player != nil {
-		player.Position = request.Player.Position
-		s.broadcast(Response{Type: request.Type, Message: "animate", Player: *player})
-	}*/
+// wordleHandle word predictions operations
+func (s *Socket) wordleHandle(_ *websocket.Conn) {
+
 }
 
-func (s *Socket) nameHandle(_ *websocket.Conn) {
-	/*if player := players.FindPlayer(request.Player.Name); player != nil {
-		s.broadcast(Response{Type: request.Type, Message: request.Message, Player: *player})
-		player.Name = request.Message
-	}*/
-}
-
+// limitHandle game max limit
 func (s *Socket) limitHandle(_ *websocket.Conn) error {
-	if len(s.connections) > 50 {
+	if len(PLAYERS) > MaxConnection {
 		return errors.New("maximum limit reached")
 	}
 	return nil
 }
 
+// disconnect
 func (s *Socket) disconnect(ws *websocket.Conn) {
 	/*msg := fmt.Sprintf("%s disconnected", request.Player.Name)
 	HandleLog(msg, nil)
