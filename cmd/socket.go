@@ -90,7 +90,6 @@ func (s *Socket) nameHandle(conn *websocket.Conn) {
 // wordleHandle word predictions operations
 func (s *Socket) wordleHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoom(conn); room != nil {
-		room.Players[conn].AddWordToGuess(request.Message)
 		room.Wordle.CheckWord(request.Message)
 		s.broadcast(conn, Response{Type: request.Type, Message: "new wordle", Room: room})
 	}
