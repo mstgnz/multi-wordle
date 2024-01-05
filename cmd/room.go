@@ -51,8 +51,9 @@ func NewRoom(lang string, length, trial int) (*Room, error) {
 		Length:  length,
 		Trial:   trial,
 		Wordle: Wordle{
-			Word:     getWord,
-			Alphabet: SetAlphabet(lang),
+			Word:      getWord,
+			Forecasts: make(map[string][]Forecast),
+			Alphabet:  SetAlphabet(lang),
 		},
 	}
 

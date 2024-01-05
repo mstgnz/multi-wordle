@@ -258,6 +258,8 @@ class MultiWordle {
 
     // wordle layout initialization
     initWordle(){
+        this.wordleBox.innerHTML = ""
+        this.alphabet.innerHTML = ""
         // set wordle
         for (let i = 0; i < this.room.len; i++) {
             const wordleRow = document.createElement("div");
