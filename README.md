@@ -52,6 +52,15 @@ Launch the application in your browser and join with a random username.
 Click anywhere on the game area to move your character in that direction.
 Type a message in the text box at the bottom and press "Enter" to send a message.
 
+#### commands
+
+| command              | description              |
+|----------------------|--------------------------|
+| :wordle word         | Guess Wordle             |
+| :change-name newName | Change Nick Name         |
+| :change-bg           | Change Random Background |
+| :change-bg newUrl    | Change Url Background    |
+
 ### Contributing
 This project is open-source, and contributions are welcome. Feel free to contribute or provide feedback of any kind.
 
