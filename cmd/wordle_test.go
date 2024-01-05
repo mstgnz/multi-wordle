@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strconv"
 	"testing"
 )
 
@@ -13,15 +14,14 @@ func TestAlphabet_SetColor(t *testing.T) {
 		color string
 	}
 	tests := []struct {
-		name   string
 		fields fields
 		args   args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			a := &Alphabet{
 				Letter: tt.fields.Letter,
 				Color:  tt.fields.Color,
@@ -40,15 +40,14 @@ func TestForecast_SetColor(t *testing.T) {
 		color string
 	}
 	tests := []struct {
-		name   string
 		fields fields
 		args   args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			f := &Forecast{
 				Letter: tt.fields.Letter,
 				Color:  tt.fields.Color,
@@ -68,15 +67,14 @@ func TestWordle_CheckWord(t *testing.T) {
 		word string
 	}
 	tests := []struct {
-		name   string
 		fields fields
 		args   args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			w := &Wordle{
 				Word:      tt.fields.Word,
 				Forecasts: tt.fields.Forecasts,
@@ -98,15 +96,14 @@ func TestWordle_SetAlphabet(t *testing.T) {
 		color  string
 	}
 	tests := []struct {
-		name   string
 		fields fields
 		args   args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			w := &Wordle{
 				Word:      tt.fields.Word,
 				Forecasts: tt.fields.Forecasts,

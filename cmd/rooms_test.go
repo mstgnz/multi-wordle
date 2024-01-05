@@ -2,6 +2,7 @@ package main
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
 
 	"golang.org/x/net/websocket"
@@ -12,7 +13,6 @@ func TestRooms_AddRoom(t *testing.T) {
 		room *Room
 	}
 	tests := []struct {
-		name string
 		r    Rooms
 		args args
 		want *Room
@@ -20,8 +20,8 @@ func TestRooms_AddRoom(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			if got := tt.r.AddRoom(tt.args.room); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("AddRoom() = %v, want %v", got, tt.want)
 			}
@@ -31,14 +31,13 @@ func TestRooms_AddRoom(t *testing.T) {
 
 func TestRooms_DelRoom(t *testing.T) {
 	tests := []struct {
-		name string
-		r    Rooms
+		r Rooms
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			tt.r.DelRoom()
 		})
 	}
@@ -49,7 +48,6 @@ func TestRooms_FindRoom(t *testing.T) {
 		conn *websocket.Conn
 	}
 	tests := []struct {
-		name string
 		r    Rooms
 		args args
 		want *Room
@@ -57,8 +55,8 @@ func TestRooms_FindRoom(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			if got := tt.r.FindRoom(tt.args.conn); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FindRoom() = %v, want %v", got, tt.want)
 			}

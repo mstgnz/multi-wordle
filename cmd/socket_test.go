@@ -2,6 +2,7 @@ package main
 
 import (
 	"reflect"
+	"strconv"
 	"testing"
 
 	"golang.org/x/net/websocket"
@@ -9,14 +10,13 @@ import (
 
 func TestNewSocket(t *testing.T) {
 	tests := []struct {
-		name string
 		want *Socket
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			if got := NewSocket(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewSocket() = %v, want %v", got, tt.want)
 			}
@@ -29,14 +29,13 @@ func TestSocket_Handler(t *testing.T) {
 		ws *websocket.Conn
 	}
 	tests := []struct {
-		name string
 		args args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			s.Handler(tt.args.ws)
 		})
@@ -48,14 +47,13 @@ func TestSocket_animateHandle(t *testing.T) {
 		conn *websocket.Conn
 	}
 	tests := []struct {
-		name string
 		args args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			s.animateHandle(tt.args.conn)
 		})
@@ -68,14 +66,13 @@ func TestSocket_broadcast(t *testing.T) {
 		response Response
 	}
 	tests := []struct {
-		name string
 		args args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			s.broadcast(tt.args.conn, tt.args.response)
 		})
@@ -87,14 +84,13 @@ func TestSocket_disconnect(t *testing.T) {
 		conn *websocket.Conn
 	}
 	tests := []struct {
-		name string
 		args args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			s.disconnect(tt.args.conn)
 		})
@@ -107,14 +103,13 @@ func TestSocket_emit(t *testing.T) {
 		response Response
 	}
 	tests := []struct {
-		name string
 		args args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			s.emit(tt.args.ws, tt.args.response)
 		})
@@ -129,8 +124,8 @@ func TestSocket_limitHandle(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			if err := s.limitHandle(); (err != nil) != tt.wantErr {
 				t.Errorf("limitHandle() error = %v, wantErr %v", err, tt.wantErr)
@@ -144,14 +139,13 @@ func TestSocket_loginHandle(t *testing.T) {
 		ws *websocket.Conn
 	}
 	tests := []struct {
-		name string
 		args args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			s.loginHandle(tt.args.ws)
 		})
@@ -163,14 +157,13 @@ func TestSocket_messageHandle(t *testing.T) {
 		conn *websocket.Conn
 	}
 	tests := []struct {
-		name string
 		args args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			s.messageHandle(tt.args.conn)
 		})
@@ -182,14 +175,13 @@ func TestSocket_nameHandle(t *testing.T) {
 		conn *websocket.Conn
 	}
 	tests := []struct {
-		name string
 		args args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			s.nameHandle(tt.args.conn)
 		})
@@ -201,14 +193,13 @@ func TestSocket_wordleHandle(t *testing.T) {
 		conn *websocket.Conn
 	}
 	tests := []struct {
-		name string
 		args args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			s.wordleHandle(tt.args.conn)
 		})

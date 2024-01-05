@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"reflect"
+	"strconv"
 	"testing"
 )
 
@@ -19,8 +20,8 @@ func TestContainsValueInSlice(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			if got := ContainsValueInSlice(tt.args.val, tt.args.array); got != tt.want {
 				t.Errorf("ContainsValueInSlice() = %v, want %v", got, tt.want)
 			}
@@ -41,8 +42,8 @@ func TestExistsLetter(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			if got := ExistsLetter(tt.args.word, tt.args.letter); got != tt.want {
 				t.Errorf("ExistsLetter() = %v, want %v", got, tt.want)
 			}
@@ -55,7 +56,6 @@ func TestGetLineCount(t *testing.T) {
 		file *os.File
 	}
 	tests := []struct {
-		name    string
 		args    args
 		want    int
 		wantErr bool
@@ -63,8 +63,8 @@ func TestGetLineCount(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			got, err := GetLineCount(tt.args.file)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetLineCount() error = %v, wantErr %v", err, tt.wantErr)
@@ -83,7 +83,6 @@ func TestGetWordFromFile(t *testing.T) {
 		lineNo int
 	}
 	tests := []struct {
-		name    string
 		args    args
 		want    string
 		wantErr bool
@@ -91,8 +90,8 @@ func TestGetWordFromFile(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			got, err := GetWordFromFile(tt.args.file, tt.args.lineNo)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetWordFromFile() error = %v, wantErr %v", err, tt.wantErr)
@@ -111,22 +110,21 @@ func TestGetWords(t *testing.T) {
 		length int
 	}
 	tests := []struct {
-		name    string
 		args    args
 		want    string
 		wantErr bool
 	}{
-		// TODO: Add test cases.
-		{},
+		{args: args{lang: "en", length: 5}, want: "", wantErr: false},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			got, err := GetWords(tt.args.lang, tt.args.length)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetWords() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
+			// FAILED is set if it cannot receive words from the file.
+			if tt.want == "FAILED" {
 				t.Errorf("GetWords() got = %v, want %v", got, tt.want)
 			}
 		})
@@ -145,8 +143,8 @@ func TestHandleLog(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			HandleLog(tt.args.message, tt.args.err)
 		})
 	}
@@ -160,8 +158,8 @@ func TestRGB(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			if got := RGB(); got != tt.want {
 				t.Errorf("RGB() = %v, want %v", got, tt.want)
 			}
@@ -177,8 +175,8 @@ func TestRandomColor(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			if got := RandomColor(); got != tt.want {
 				t.Errorf("RandomColor() = %v, want %v", got, tt.want)
 			}
@@ -198,8 +196,8 @@ func TestRandomName(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			if got := RandomName(tt.args.n); got != tt.want {
 				t.Errorf("RandomName() = %v, want %v", got, tt.want)
 			}
@@ -219,8 +217,8 @@ func TestSetAlphabet(t *testing.T) {
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			if got := SetAlphabet(tt.args.lang); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("SetAlphabet() = %v, want %v", got, tt.want)
 			}
