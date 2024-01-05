@@ -9,6 +9,8 @@ It's the same Wordle game, the way of playing doesn't change.
 There is only a two-player version with websocket and a scoring system. Each player takes turns guessing. The scoring system determines the winner.
 
 ### Features
+- [x] There will be rooms for two people.
+- [x] If there's only one person in the room, it's a single game. He can play alone.
 - [ ] At the beginning of the game, the number of words to be played with the language option and word lengths can be set.  
 - [ ] 5 points for finding the correct letter in the word.  
 - [ ] 2 points for finding the letter in the word but misplacing it.  
