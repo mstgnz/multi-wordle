@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 
 	"golang.org/x/net/websocket"
 )
@@ -97,8 +98,12 @@ func (s *Socket) nameHandle(conn *websocket.Conn) {
 func (s *Socket) wordleHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoom(conn); room != nil {
 		player := room.Players[conn]
-		room.Wordle.CheckWord(request.Message)
-		s.broadcast(conn, Response{Type: request.Type, Message: "new wordle", Room: room, Player: player, Players: room.GetPlayers()})
+		if room.Length == len(request.Message) {
+			room.Wordle.CheckWord(strings.ToUpper(request.Message))
+			s.broadcast(conn, Response{Type: request.Type, Message: "new wordle", Room: room, Player: player, Players: room.GetPlayers()})
+		} else {
+			s.emit(conn, Response{Type: "error", Message: "word count not matched", Room: room, Player: player, Players: room.GetPlayers()})
+		}
 	}
 }
 
