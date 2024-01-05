@@ -32,17 +32,17 @@ type Room struct {
 // NewRoom When a user is connected, if there is a room with 1 user,
 // the user will enter that room, if not,
 // a new room will be created and the user will enter there.
-func NewRoom(lang string, length, trial int) *Room {
+func NewRoom(lang string, length, trial int) (*Room, error) {
 
 	for _, room := range ROOMS {
 		if len(room.Players) < 2 {
-			return room
+			return room, nil
 		}
 	}
 
 	getWord, err := GetWords(lang, length)
 	if err != nil {
-		getWord = "FAILED"
+		return nil, err
 	}
 
 	newRoom := &Room{
@@ -57,7 +57,7 @@ func NewRoom(lang string, length, trial int) *Room {
 	}
 
 	ROOMS = append(ROOMS, newRoom)
-	return newRoom
+	return newRoom, nil
 }
 
 // AddMessage append message
@@ -69,7 +69,9 @@ func (r *Room) AddMessage(message string) {
 func (r *Room) GetPlayers() []*Player {
 	var players []*Player
 	for _, player := range r.Players {
-		players = append(players, player)
+		if player != nil {
+			players = append(players, player)
+		}
 	}
 	return players
 }

@@ -74,7 +74,12 @@ func (s *Socket) broadcast(conn *websocket.Conn, response Response) {
 // loginHandle If login emit is received by the client, create a new user and assign it to the room.
 func (s *Socket) loginHandle(ws *websocket.Conn) {
 	player := NewPlayer(ws)
-	room := NewRoom("en", 5, 5)
+	room, err := NewRoom("en", 5, 5)
+	if err != nil || room == nil {
+		PLAYERS.DelPlayer(ws)
+		s.emit(ws, Response{Type: request.Type, Message: "Failed initialized", Room: room})
+		return
+	}
 	if len(room.Players) == 0 {
 		player.IsGuessing = true
 	}

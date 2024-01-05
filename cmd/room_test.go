@@ -2,6 +2,7 @@ package main
 
 import (
 	"reflect"
+	"strconv"
 	"sync"
 	"testing"
 
@@ -15,40 +16,22 @@ func TestNewRoom(t *testing.T) {
 		trial  int
 	}
 	tests := []struct {
-		name string
-		args args
-		want *Room
+		args    args
+		want    *Room
+		wantErr bool
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewRoom(tt.args.lang, tt.args.length, tt.args.trial); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewRoom() = %v, want %v", got, tt.want)
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			got, err := NewRoom(tt.args.lang, tt.args.length, tt.args.trial)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("NewRoom() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
-		})
-	}
-}
-
-func TestNewRoom1(t *testing.T) {
-	type args struct {
-		lang   string
-		length int
-		trial  int
-	}
-	tests := []struct {
-		name string
-		args args
-		want *Room
-	}{
-		// TODO: Add test cases.
-		{},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewRoom(tt.args.lang, tt.args.length, tt.args.trial); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewRoom() = %v, want %v", got, tt.want)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewRoom() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -69,15 +52,14 @@ func TestRoom_AddMessage(t *testing.T) {
 		message string
 	}
 	tests := []struct {
-		name   string
 		fields fields
 		args   args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			r := &Room{
 				ID:         tt.fields.ID,
 				Length:     tt.fields.Length,
@@ -86,7 +68,6 @@ func TestRoom_AddMessage(t *testing.T) {
 				Wordle:     tt.fields.Wordle,
 				Players:    tt.fields.Players,
 				PlayerTurn: tt.fields.PlayerTurn,
-				Mutex:      tt.fields.Mutex,
 			}
 			r.AddMessage(tt.args.message)
 		})
@@ -105,15 +86,14 @@ func TestRoom_GetPlayers(t *testing.T) {
 		Mutex      sync.Mutex
 	}
 	tests := []struct {
-		name   string
 		fields fields
 		want   []*Player
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			r := &Room{
 				ID:         tt.fields.ID,
 				Length:     tt.fields.Length,
@@ -122,7 +102,6 @@ func TestRoom_GetPlayers(t *testing.T) {
 				Wordle:     tt.fields.Wordle,
 				Players:    tt.fields.Players,
 				PlayerTurn: tt.fields.PlayerTurn,
-				Mutex:      tt.fields.Mutex,
 			}
 			if got := r.GetPlayers(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetPlayers() = %v, want %v", got, tt.want)

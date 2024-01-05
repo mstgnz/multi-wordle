@@ -123,8 +123,7 @@ func TestGetWords(t *testing.T) {
 				t.Errorf("GetWords() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			// FAILED is set if it cannot receive words from the file.
-			if tt.want == "FAILED" {
+			if got != tt.want {
 				t.Errorf("GetWords() got = %v, want %v", got, tt.want)
 			}
 		})

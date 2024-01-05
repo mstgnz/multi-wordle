@@ -55,7 +55,7 @@ func SetAlphabet(lang string) []Alphabet {
 // GetWords get random word
 func GetWords(lang string, length int) (string, error) {
 	// Specify the file name and path
-	fileName := fmt.Sprintf("./assets/%s/%d_letter_words.txt", lang, length)
+	fileName := fmt.Sprintf("./lang/%s/%d_letter_words.txt", lang, length)
 	// Open the file
 	file, err := os.Open(fileName)
 	if err != nil {
@@ -95,7 +95,9 @@ func GetLineCount(file *os.File) (int, error) {
 		lineCount++
 	}
 	// back to the beginning
-	_, _ = file.Seek(0, 0)
+	if _, err := file.Seek(0, 0); err != nil {
+		return lineCount, err
+	}
 	if err := scanner.Err(); err != nil {
 		return lineCount, err
 	}
