@@ -17,16 +17,16 @@ func (w *Wordle) CheckWord(word string) {
 	for i := 0; i < len(w.Word); i++ {
 		if w.Word[i] == word[i] {
 			// If the letter is present and in the correct position, it is green
-			w.SetAlphabet(rune(w.Word[i]), "#00FF00")
-			forecasts = append(forecasts, Forecast{Letter: rune(w.Word[i]), Color: "#00FF00"})
-		} else if ExistsLetter(word, w.Word[i]) {
+			w.SetAlphabet(rune(word[i]), "#00FF00")
+			forecasts = append(forecasts, Forecast{Letter: rune(word[i]), Color: "#00FF00"})
+		} else if ExistsLetter(w.Word, word[i]) {
 			// If the letter is present but in the wrong position, it is yellow
-			w.SetAlphabet(rune(w.Word[i]), "#FFFF00")
-			forecasts = append(forecasts, Forecast{Letter: rune(w.Word[i]), Color: "#FFFF00"})
+			w.SetAlphabet(rune(word[i]), "#FFFF00")
+			forecasts = append(forecasts, Forecast{Letter: rune(word[i]), Color: "#FFFF00"})
 		} else {
 			// If the letter is not present, it is gray
-			w.SetAlphabet(rune(w.Word[i]), "#808080")
-			forecasts = append(forecasts, Forecast{Letter: rune(w.Word[i]), Color: "#808080"})
+			w.SetAlphabet(rune(word[i]), "#808080")
+			forecasts = append(forecasts, Forecast{Letter: rune(word[i]), Color: "#808080"})
 		}
 	}
 	w.Forecasts[word] = forecasts
@@ -34,9 +34,9 @@ func (w *Wordle) CheckWord(word string) {
 
 // SetAlphabet Triggered by CheckWord and the corresponding rune is found in the Alphabet slice
 func (w *Wordle) SetAlphabet(letter rune, color string) {
-	for _, v := range w.Alphabet {
-		if v.Letter == letter {
-			v.SetColor(color)
+	for i := range w.Alphabet {
+		if w.Alphabet[i].Letter == letter {
+			w.Alphabet[i].SetColor(color)
 		}
 	}
 }
