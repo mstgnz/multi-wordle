@@ -138,3 +138,13 @@ func RandomName(n int) string {
 	}
 	return string(s)
 }
+
+// RandomColor generates a random color sequence for player icons.
+func RandomColor() string {
+	return fmt.Sprintf("rgb(%v,%v,%v)", RGB(), RGB(), RGB())
+}
+
+// RGB generates a random color.
+func RGB() int {
+	return rand.Intn(256)
+}

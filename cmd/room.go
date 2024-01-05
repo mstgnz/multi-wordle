@@ -64,3 +64,12 @@ func NewRoom(lang string, length, trial int) *Room {
 func (r *Room) AddMessage(message string) {
 	r.Messages = append(r.Messages, message)
 }
+
+// GetPlayers get players from map object
+func (r *Room) GetPlayers() []*Player {
+	var players []*Player
+	for _, player := range r.Players {
+		players = append(players, player)
+	}
+	return players
+}
