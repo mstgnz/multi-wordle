@@ -34,13 +34,18 @@ Follow the steps below to start the project locally or on a web server.
     ```
 
 2. Run project
-    ```bash
-    docker build -t multi-wordle:latest . && docker run -d --restart=always -p 3000:3000 --name=multi-wordle multi-wordle
+   ```bash
+   make run
+   ```
+   OR
+   ```bash
+    docker compose up -d
     ```
    OR
     ```bash
-    docker compose up -d
+    docker build -t multi-wordle:latest . && docker run -d --restart=always -p 3000:3000 --name=multi-wordle multi-wordle
     ```
+
 
 ### Usage
 Launch the application in your browser and join with a random username.
