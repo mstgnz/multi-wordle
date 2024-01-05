@@ -5,8 +5,10 @@ This project is licensed under the MIT Licence. Refer to https://github.com/mstg
 class MultiWordle {
     constructor() {
         this.room = null;
-        this.messages = [];
         this.objSize = 0;
+        this.player = {}
+        this.players = [];
+        this.messages = [];
         this.isAnimate = false;
         this.game = document.getElementById("game")
         this.chat = document.getElementById("chat")
@@ -14,8 +16,8 @@ class MultiWordle {
         this.input = document.getElementById("input")
         this.wordle = document.getElementById("wordle")
         this.alphabet = document.getElementById("alphabet")
-        this.wordleBox = document.getElementById("wordle-box")
         this.connected = document.getElementById("connected")
+        this.wordleBox = document.getElementById("wordle-box")
         this.unconnected = document.getElementById("unconnected")
         this.game.addEventListener("click", this.onClickPlayer)
         this.input.addEventListener("keypress", this.onMessage)
@@ -36,6 +38,8 @@ class MultiWordle {
         // on message
         this.socket.onmessage = (event) => {
             const response = JSON.parse(event.data)
+            this.room = response.room
+            this.players = response.players
             console.log(response)
             switch (response.type) {
                 case "login":
@@ -44,7 +48,7 @@ class MultiWordle {
                 case "animate":
                     this.handleAnimate(response)
                     break
-                case "message":
+                case "chat":
                     this.handleMessage(response)
                     break
                 case "error":
@@ -52,6 +56,9 @@ class MultiWordle {
                     break
                 case "name":
                     this.handleName(response)
+                    break
+                case "wordle":
+                    this.handleWordle(response)
                     break
                 case "disconnect":
                     this.handleDisconnect(response)
@@ -73,7 +80,7 @@ class MultiWordle {
     }
 
     handleNewPlayer(response) {
-        this.room = response.room
+        this.player = response.player
         this.initWordle()
         this.addPlayerToGameArea()
         this.addMessageToChat(`[SERVER] ${response.message} connected`)
@@ -81,15 +88,15 @@ class MultiWordle {
     }
 
     handleAnimate(response) {
-        /*const player = this.players.find((player) => player.name === response.player.name)
+        const player = this.players.find((player) => player.name === response.player.name)
         player.position.x = response.player.position.x;
         player.position.y = response.player.position.y;
-        this.animateElement(player)*/
+        this.animateElement(player)
     }
 
     handleMessage(response) {
-        this.messages.push(response.message)
-        this.addMessageToChat(response.message)
+        this.messages = response.room.messages
+        this.addMessageToChat(this.messages[this.messages.length -1])
         this.scrollTop()
     }
 
@@ -100,19 +107,24 @@ class MultiWordle {
     }
 
     handleName(response) {
-        /*if (response.player.name !== this.player.name) {
+        if (response.player.name !== this.player.name) {
             const player = this.players.find((player) => player.name === response.player.name)
             if(player){
                 this.changeName(player, response.message)
                 player.name = response.message
             }
-        }*/
+        }
+    }
+
+    handleWordle(response) {
+        this.room = response.room
+        this.initWordle()
     }
 
     handleDisconnect(response) {
-        /*this.players = this.players.filter((p) => p.name !== response.player.name);
+        this.players = this.players.filter((p) => p.name !== response.player.name);
         this.addMessageToChat(`[SERVER]: ${response.player.name} disconnected`)
-        this.scrollTop()*/
+        this.scrollTop()
     }
 
     scrollTop() {
@@ -121,27 +133,37 @@ class MultiWordle {
         })
     }
 
-    send(type, message = "") {
+    animateElement(player) {
+        const element = document.getElementById(player.name)
+        if(element){
+            const center = this.objSize / 2;
+            element.style.left = (player.position.x - center) + "px";
+            element.style.top = (player.position.y - center) + "px";
+            this.isAnimate = false;
+        }
+    }
+
+    send(type, message = "", position = {}) {
         this.socket.send(
             JSON.stringify({
                 type: type,
-                message: message
+                message: message,
+                position: position
             })
         )
     }
 
     onMessage = (event) => {
         if (event.key === "Enter" && this.input.value.length) {
-            /*this.addMessageToChat(`${this.player.name}: ${this.input.value}`)
-            this.send("message", this.input.value)
+            this.send("chat", this.input.value)
             this.showBubble(this.player.name, this.input.value)
-            this.checkCommand(this.input.value)*/
+            this.checkCommand(this.input.value)
             this.input.value = "";
         }
     }
 
     onClickPlayer = (event) => {
-        /*const element = document.getElementById(this.player.name)
+        const element = document.getElementById(this.player.name)
         if(element){
             this.objSize = element.offsetWidth;
             const center = this.objSize / 2;
@@ -149,14 +171,14 @@ class MultiWordle {
             this.player.position.y = event.offsetY - center;
             if (!this.isAnimate) {
                 this.isAnimate = true;
-                this.send("animate","")
+                this.send("animate","", {"x":event.offsetX - center, "y":event.offsetY - center})
                 this.animateElement(this.player)
             }
-        }*/
+        }
     }
 
     showBubble(name, message) {
-        /*const element = document.getElementById(name)
+        const element = document.getElementById(name)
         if(element){
             const messageElement = element.querySelector('.message')
             messageElement.style.display = 'block';
@@ -164,15 +186,15 @@ class MultiWordle {
             setTimeout(function () {
                 messageElement.style.display = 'none';
             }, this.bubbleLifeTime(message))
-        }*/
+        }
     }
 
     bubbleLifeTime(message) {
-        /*const min = 500;
+        const min = 500;
         const max = 3000;
         const msPerLetter = 40;
         let bubbleTime = min + message.length * msPerLetter;
-        return bubbleTime > max ? max : bubbleTime;*/
+        return bubbleTime > max ? max : bubbleTime;
     }
 
     checkCommand(command){
@@ -180,14 +202,21 @@ class MultiWordle {
         if(command[1]) {
             switch (command[0]) {
                 case ":change-name":
-                   /* const newName = command[1].substring(0, 5)
+                    const newName = command[1].substring(0, 5)
                     this.send("name", newName)
                     this.changeName(this.player, newName)
-                    this.player.name = command[1];*/
+                    this.player.name = command[1];
                     break
                 case ":change-bg":
-                   /* const newBg = command[1];
-                    document.body.style.backgroundImage = `url(${newBg})`*/
+                    const newBg = command[1];
+                    document.body.style.backgroundImage = `url(${newBg})`
+                    break
+                case ":wordle":
+                    if(this.room.len === command[1].length){
+                        this.send("wordle", command[1])
+                    }else{
+                        alert("word count not matched")
+                    }
                     break
             }
         }
@@ -208,13 +237,15 @@ class MultiWordle {
         }
     }
 
-    addPlayerToGameArea(player) {
-        this.game.innerHTML += `<div class="circle" id="${player.name}" style="left:${player.position.x}px;top:${player.position.y}px; background-color: ${player.color}">
+    addPlayerToGameArea() {
+        this.players.forEach(player => {
+            this.game.innerHTML += `<div class="circle" id="${player.name}" style="left:${player.position.x}px;top:${player.position.y}px; background-color: ${player.color}">
             <div class="relative">
                 <span class="name">${player.name}</span>
                 <div class="message"></div>
             </div>
-        </div>`;
+        </div>`
+        })
     }
 
     addMessageToChat(message) {
@@ -232,9 +263,9 @@ class MultiWordle {
             const wordleRow = document.createElement("div");
             wordleRow.classList.add("wordle-row");
             for (let j = 0; j < this.room.trial; j++) {
-                const gridItem = document.createElement("div");
-                gridItem.classList.add("wordle-item");
-                wordleRow.appendChild(gridItem);
+                const wordleItem = document.createElement("div");
+                wordleItem.classList.add("wordle-item");
+                wordleRow.appendChild(wordleItem);
             }
             this.wordleBox.appendChild(wordleRow);
         }
