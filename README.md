@@ -56,7 +56,7 @@ Type a message in the text box at the bottom and press "Enter" to send a message
 
 | command              | description              |
 |----------------------|--------------------------|
-| :wordle word         | Guess Wordle             |
+| :wordle word         | Guess the Wordle         |
 | :change-name newName | Change Nick Name         |
 | :change-bg           | Change Random Background |
 | :change-bg newUrl    | Change Url Background    |
