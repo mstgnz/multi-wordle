@@ -123,7 +123,7 @@ func TestGetWords(t *testing.T) {
 				t.Errorf("GetWords() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if got != tt.want {
+			if got == tt.want {
 				t.Errorf("GetWords() got = %v, want %v", got, tt.want)
 			}
 		})

@@ -8,7 +8,9 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"reflect"
+	"runtime"
 	"time"
 )
 
@@ -55,9 +57,11 @@ func SetAlphabet(lang string) []Alphabet {
 // GetWords get random word
 func GetWords(lang string, length int) (string, error) {
 	// Specify the file name and path
-	fileName := fmt.Sprintf("./lang/%s/%d_letter_words.txt", lang, length)
+	_, currentFile, _, _ := runtime.Caller(0)
+	filePath := filepath.Join(filepath.Dir(currentFile), "lang", lang, fmt.Sprintf("%d_letter_words.txt", length))
+
 	// Open the file
-	file, err := os.Open(fileName)
+	file, err := os.Open(filePath)
 	if err != nil {
 		return "", err
 	}
