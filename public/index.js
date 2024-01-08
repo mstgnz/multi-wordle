@@ -261,12 +261,17 @@ class MultiWordle {
         this.wordleBox.innerHTML = ""
         this.alphabet.innerHTML = ""
         // set wordle
-        for (let i = 0; i < this.room.len; i++) {
+        for (let i = 0; i < this.room.trial; i++) {
             const wordleRow = document.createElement("div");
             wordleRow.classList.add("wordle-row");
-            for (let j = 0; j < this.room.trial; j++) {
+            for (let j = 0; j < this.room.len; j++) {
                 const wordleItem = document.createElement("div");
                 wordleItem.classList.add("wordle-item");
+                const forecast = this.getLetter(i,j)
+                if(forecast){
+                    wordleItem.textContent = String.fromCharCode(forecast.letter)
+                    wordleItem.style.backgroundColor = forecast.color
+                }
                 wordleRow.appendChild(wordleItem);
             }
             this.wordleBox.appendChild(wordleRow);
@@ -295,6 +300,17 @@ class MultiWordle {
             splitArray.push(part);
         }
         return splitArray;
+    }
+
+    getLetter(i,j){
+        const forecasts = this.room.wordle.forecasts;
+        if (i >= 0 && i < forecasts.length && j >= 0) {
+            const forecastI = forecasts[i];
+            if (j < forecastI.forecast.length) {
+                return forecastI.forecast[j];
+            }
+        }
+        return null
     }
 }
 

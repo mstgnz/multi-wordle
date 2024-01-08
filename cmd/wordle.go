@@ -5,7 +5,8 @@ type Wordle struct {
 	// the word to be predicted
 	Word string `json:"word"`
 	// Forecasts keeps a comparison of all attempts and words attempted
-	Forecasts map[string][]Forecast `json:"forecasts"`
+	//Forecasts map[string][]Forecast `json:"forecasts"`
+	Forecasts []Forecasts `json:"forecasts"`
 	// detail according to estimates
 	Alphabet []Alphabet `json:"alphabet"`
 }
@@ -29,7 +30,10 @@ func (w *Wordle) CheckWord(word string) {
 			forecasts = append(forecasts, Forecast{Letter: rune(word[i]), Color: "#808080"})
 		}
 	}
-	w.Forecasts[word] = forecasts
+	w.Forecasts = append(w.Forecasts, Forecasts{
+		Word:     word,
+		Forecast: forecasts,
+	})
 }
 
 // SetAlphabet Triggered by CheckWord and the corresponding rune is found in the Alphabet slice
@@ -69,4 +73,10 @@ type Forecast struct {
 // SetColor It is triggered by SetAlphabet and the color change is applied for the corresponding letter.
 func (f *Forecast) SetColor(color string) {
 	f.Color = color
+}
+
+// Forecasts keeps all predictions
+type Forecasts struct {
+	Word     string     `json:"word"`
+	Forecast []Forecast `json:"forecast"`
 }
