@@ -1,17 +1,17 @@
-body{
+body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;
     background: #1F252D url("https://source.unsplash.com/random/1920x1080") no-repeat center fixed;
     background-size: cover;
+    overflow: hidden;
 }
 
-#game{
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+#title {
+    text-align: left;
+    padding: 2px 10px;
+    color: #fff;
+    text-shadow: 2px 2px #000;
+    letter-spacing: 2px;
 }
 
 .circle {
@@ -30,14 +30,15 @@ body{
     transition: left 0.5s ease, top 0.5s ease;
 }
 
-.circle .relative{
+.circle .relative {
     position: relative;
 }
 
 .circle .relative > .name {
     text-transform: uppercase;
 }
-.circle .relative > .message{
+
+.circle .relative > .message {
     font-size: 11px;
     position: absolute;
     top: -22px;
@@ -50,7 +51,7 @@ body{
     display: none;
 }
 
-#chat{
+#chat {
     position: absolute;
     bottom: 11%;
     left: 30%;
@@ -59,24 +60,28 @@ body{
     overflow-y: auto;
     z-index: -1;
 }
-#chat .content{
+
+#chat .content {
     text-align: left;
     padding: 2px 10px;
-    color:#fff;
+    color: #fff;
     text-shadow: 2px 2px #000;
     letter-spacing: 2px;
 }
-#chat .name{
-    font-size: 15px!important;
-}
-#chat .message{
-    display: inline;
-}
-#chat .item{
-    margin:.2em 0!important;
+
+#chat .name {
+    font-size: 15px !important;
 }
 
-form{
+#chat .message {
+    display: inline;
+}
+
+#chat .item {
+    margin: .2em 0 !important;
+}
+
+form {
     position: absolute;
     bottom: 20px;
     width: 40%;
@@ -84,16 +89,18 @@ form{
     padding: 10px;
 }
 
-form input{
+form input {
     padding: 10px;
     outline: none;
     width: 100%;
     border: solid 1px sandybrown;
 }
+
 ::-webkit-scrollbar {
     width: 0;
 }
-span.changes{
+
+span.changes {
     position: absolute;
     right: 2px;
     top: 3px;
@@ -102,7 +109,8 @@ span.changes{
     background: skyblue;
     color: darkcyan;
 }
-span.change{
+
+span.change {
     position: absolute;
     right: -5px;
     bottom: 35px;
@@ -110,7 +118,8 @@ span.change{
     padding: 5px;
     display: none;
 }
-span.change a{
+
+span.change a {
     display: block;
     text-align: right;
     padding: 5px;
@@ -118,7 +127,8 @@ span.change a{
     margin-bottom: 3px;
     cursor: pointer;
 }
-#unconnected{
+
+#unconnected {
     top: 100px;
     color: white;
     display: none;
@@ -127,7 +137,7 @@ span.change a{
     text-shadow: 2px 2px #000;
 }
 
-#wordle{
+#wordle {
     position: absolute;
     bottom: 49%;
     left: 30%;
@@ -135,17 +145,20 @@ span.change a{
     height: 50%;
     z-index: -1;
 }
-#wordle-box{
+
+#wordle-box {
     width: 40%;
     display: flex;
     flex-wrap: wrap;
     margin: 0 auto;
     justify-content: center;
 }
+
 #wordle-box .wordle-row {
     display: flex;
     justify-content: space-around;
 }
+
 #wordle-box .wordle-item {
     width: 40px;
     height: 40px;
@@ -157,17 +170,20 @@ span.change a{
     border: 1px solid #ccc;
     cursor: pointer;
 }
-#alphabet{
+
+#alphabet {
     width: 60%;
     display: flex;
     flex-wrap: wrap;
     margin: 40px auto 0;
     justify-content: center;
 }
+
 #alphabet .alphabet-row {
     display: flex;
     justify-content: space-around;
 }
+
 #alphabet .alphabet-item {
     width: 40px;
     height: 40px;
