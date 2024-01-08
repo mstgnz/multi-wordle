@@ -74,10 +74,10 @@ func (s *Socket) broadcast(conn *websocket.Conn, response Response) {
 // loginHandle If login emit is received by the client, create a new user and assign it to the room.
 func (s *Socket) loginHandle(ws *websocket.Conn) {
 	player := NewPlayer(ws)
-	room, err := NewRoom("en", 5, 5)
+	room, err := NewRoom("en", 3, 5, 5)
 	if err != nil || room == nil {
 		PLAYERS.DelPlayer(ws)
-		s.emit(ws, Response{Type: request.Type, Message: "Failed initialized", Room: room})
+		s.emit(ws, Response{Type: "error", Message: "Failed initialized", Room: room})
 		return
 	}
 	if len(room.Players) == 0 {
@@ -104,7 +104,15 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoom(conn); room != nil {
 		player := room.Players[conn]
 		if room.Length == len(request.Message) {
-			room.Wordle.CheckWord(strings.ToUpper(request.Message))
+			wordle := strings.ToUpper(request.Message)
+			// If a word is used that is not in the game language, -2 points penalty. The word list is embedded in the project.
+			contains, err := ContainsWord(room.Length, room.Lang, wordle)
+			if !contains || err != nil {
+				player.Score -= 2
+				s.emit(conn, Response{Type: "error", Message: "There is no such word in this language.", Room: room})
+				return
+			}
+			room.CheckWord(wordle, player)
 			s.broadcast(conn, Response{Type: request.Type, Message: "new wordle", Room: room, Player: player, Players: room.GetPlayers()})
 		} else {
 			s.emit(conn, Response{Type: "error", Message: "word count not matched", Room: room, Player: player, Players: room.GetPlayers()})
