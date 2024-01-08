@@ -10,6 +10,7 @@ type Player struct {
 	Score      int             `json:"score"`
 	IsGuessing bool            `json:"is_guessing"`
 	Color      string          `json:"color"`
+	Token      string          `json:"token"`
 	Position   Position        `json:"position"`
 	Conn       *websocket.Conn `json:"-"`
 }
@@ -19,6 +20,7 @@ func NewPlayer(conn *websocket.Conn) *Player {
 		Name:     RandomName(5),
 		Score:    0,
 		Color:    RandomColor(),
+		Token:    GenerateToken(),
 		Position: Position{X: 0, Y: 0},
 		Conn:     conn,
 	}
