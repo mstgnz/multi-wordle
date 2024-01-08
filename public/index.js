@@ -13,6 +13,7 @@ class MultiWordle {
         this.game = document.getElementById("game")
         this.chat = document.getElementById("chat")
         this.form = document.getElementById("form")
+        this.title = document.getElementById("title")
         this.input = document.getElementById("input")
         this.wordle = document.getElementById("wordle")
         this.alphabet = document.getElementById("alphabet")
@@ -40,6 +41,7 @@ class MultiWordle {
             const response = JSON.parse(event.data)
             this.room = response.room
             this.players = response.players
+            this.title.innerHTML = this.room.id.toUpperCase()
             console.log(response)
             switch (response.type) {
                 case "login":
