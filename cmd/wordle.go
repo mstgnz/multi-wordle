@@ -2,10 +2,9 @@ package main
 
 // Wordle Keeps an array of the word to be predicted and the alphabet of the selected language.
 type Wordle struct {
-	// the word to be predicted
+	// Word the word to be predicted - json will not be in the output but attached for test purposes
 	Word string `json:"word"`
 	// Forecasts keeps a comparison of all attempts and words attempted
-	//Forecasts map[string][]Forecast `json:"forecasts"`
 	Forecasts []Forecasts `json:"forecasts"`
 	// detail according to estimates
 	Alphabet []Alphabet `json:"alphabet"`
