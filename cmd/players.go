@@ -13,10 +13,20 @@ func (p *Players) AddPlayer(player *Player) *Player {
 	return player
 }
 
-// FindPlayer find player
+// FindPlayer find player with ws
 func (p *Players) FindPlayer(conn *websocket.Conn) *Player {
 	for _, player := range *p {
 		if player.Conn == conn {
+			return player
+		}
+	}
+	return nil
+}
+
+// FindToken find player with token
+func (p *Players) FindToken(token string) *Player {
+	for _, player := range *p {
+		if player.Token == token {
 			return player
 		}
 	}
