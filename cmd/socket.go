@@ -109,10 +109,9 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 			contains, err := ContainsWord(room.Length, room.Lang, wordle)
 			if !contains || err != nil {
 				player.Score -= 2
-				s.emit(conn, Response{Type: "error", Message: "There is no such word in this language.", Room: room})
-				return
+			} else {
+				room.CheckWord(wordle, player)
 			}
-			room.CheckWord(wordle, player)
 			s.broadcast(conn, Response{Type: request.Type, Message: "new wordle", Room: room, Player: player, Players: room.GetPlayers()})
 		} else {
 			s.emit(conn, Response{Type: "error", Message: "word count not matched", Room: room, Player: player, Players: room.GetPlayers()})
