@@ -57,38 +57,10 @@ func TestForecast_SetColor(t *testing.T) {
 	}
 }
 
-func TestWordle_CheckWord(t *testing.T) {
-	type fields struct {
-		Word      string
-		Forecasts map[string][]Forecast
-		Alphabet  []Alphabet
-	}
-	type args struct {
-		word string
-	}
-	tests := []struct {
-		fields fields
-		args   args
-	}{
-		// TODO: Add test cases.
-		{},
-	}
-	for i, tt := range tests {
-		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			w := &Wordle{
-				Word:      tt.fields.Word,
-				Forecasts: tt.fields.Forecasts,
-				Alphabet:  tt.fields.Alphabet,
-			}
-			w.CheckWord(tt.args.word)
-		})
-	}
-}
-
 func TestWordle_SetAlphabet(t *testing.T) {
 	type fields struct {
 		Word      string
-		Forecasts map[string][]Forecast
+		Forecasts []Forecasts
 		Alphabet  []Alphabet
 	}
 	type args struct {
@@ -96,14 +68,15 @@ func TestWordle_SetAlphabet(t *testing.T) {
 		color  string
 	}
 	tests := []struct {
+		name   string
 		fields fields
 		args   args
 	}{
 		// TODO: Add test cases.
 		{},
 	}
-	for i, tt := range tests {
-		t.Run(strconv.Itoa(i), func(t *testing.T) {
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
 			w := &Wordle{
 				Word:      tt.fields.Word,
 				Forecasts: tt.fields.Forecasts,

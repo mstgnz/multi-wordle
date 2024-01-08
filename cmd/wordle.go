@@ -10,31 +10,6 @@ type Wordle struct {
 	Alphabet []Alphabet `json:"alphabet"`
 }
 
-// CheckWord In each prediction attempt, the word to be predicted is compared with the predicted word.
-// Coloring on the alphabet sequence according to the comparison.
-func (w *Wordle) CheckWord(word string) {
-	var forecasts []Forecast
-	for i := 0; i < len(w.Word); i++ {
-		if w.Word[i] == word[i] {
-			// If the letter is present and in the correct position, it is green
-			w.SetAlphabet(rune(word[i]), "#00FF00")
-			forecasts = append(forecasts, Forecast{Letter: rune(word[i]), Color: "#00FF00"})
-		} else if ExistsLetter(w.Word, word[i]) {
-			// If the letter is present but in the wrong position, it is yellow
-			w.SetAlphabet(rune(word[i]), "#FFFF00")
-			forecasts = append(forecasts, Forecast{Letter: rune(word[i]), Color: "#FFFF00"})
-		} else {
-			// If the letter is not present, it is gray
-			w.SetAlphabet(rune(word[i]), "#808080")
-			forecasts = append(forecasts, Forecast{Letter: rune(word[i]), Color: "#808080"})
-		}
-	}
-	w.Forecasts = append(w.Forecasts, Forecasts{
-		Word:     word,
-		Forecast: forecasts,
-	})
-}
-
 // SetAlphabet Triggered by CheckWord and the corresponding rune is found in the Alphabet slice
 func (w *Wordle) SetAlphabet(letter rune, color string) {
 	for i := range w.Alphabet {
@@ -77,5 +52,8 @@ func (f *Forecast) SetColor(color string) {
 // Forecasts keeps all predictions
 type Forecasts struct {
 	Word     string     `json:"word"`
+	Score    int        `json:"score"`
 	Forecast []Forecast `json:"forecast"`
+	// guessing player
+	Player *Player `json:"player"`
 }
