@@ -155,3 +155,31 @@ func RandomColor() string {
 func RGB() int {
 	return rand.Intn(256)
 }
+
+func ContainsWord(length int, lang, word string) (bool, error) {
+	// Specify the file name and path
+	_, currentFile, _, _ := runtime.Caller(0)
+	filePath := filepath.Join(filepath.Dir(currentFile), "lang", lang, fmt.Sprintf("%d_letter_words.txt", length))
+
+	// Open the file
+	file, err := os.Open(filePath)
+	if err != nil {
+		return false, err
+	}
+	defer func() {
+		_ = file.Close()
+	}()
+
+	// scanner
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		if scanner.Text() == word {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func GenerateToken() string {
+	return fmt.Sprintf("%d", time.Now().UnixNano())
+}
