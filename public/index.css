@@ -23,6 +23,7 @@ body {
     height: 10%;
     padding: 1%;
     color: white;
+    font-size: 18px;
     overflow: hidden;
     border-radius: 10px;
     background-color: #d2691ea8;
@@ -39,7 +40,6 @@ body {
 .circle {
     width: 75px;
     height: 75px;
-    line-height: 75px;
     border-radius: 50%; /* the magic */
     -moz-border-radius: 50%;
     -webkit-border-radius: 50%;
@@ -71,6 +71,14 @@ body {
     left: 0;
     width: 100%;
     display: none;
+}
+
+.circle .relative > span {
+    display: block;
+    padding: 5px;
+}
+.circle .relative:first-child{
+    margin-top: 15px
 }
 
 #chat {
