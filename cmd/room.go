@@ -41,7 +41,7 @@ type Room struct {
 func NewRoom(lang string, limit, length, trial int) (*Room, error) {
 
 	for _, room := range ROOMS {
-		if len(room.Players) < 2 {
+		if room.Lang == lang && room.Limit == limit && room.Length == length && room.Trial == trial && len(room.Players) < 2 {
 			return room, nil
 		}
 	}
