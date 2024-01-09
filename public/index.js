@@ -96,6 +96,7 @@ class MultiWordle {
 
     handleNewPlayer = () => {
         this.player = this.response.player
+        localStorage.setItem("wordle-token", this.player.token)
         this.initWordle()
         this.addPlayerToGameArea()
         this.handleChat()
@@ -168,13 +169,14 @@ class MultiWordle {
     }
 
     send = (type, message = "", position = {}) => {
+        const wordleToken = localStorage.getItem("wordle-token").toString()
         this.socket.send(
             JSON.stringify({
                 type: type,
                 init: this.init,
                 message: message,
                 position: position,
-                token: this.player && this.player.token ? this.player.token : ""
+                token: wordleToken ? wordleToken.toString() : ""
             })
         )
     }
