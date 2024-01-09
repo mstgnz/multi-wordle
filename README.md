@@ -11,15 +11,14 @@ There is only a two-player version with websocket and a scoring system. Each pla
 ### Features
 - [x] There will be rooms for two people.
 - [x] If there's only one person in the room, it's a single game. He can play alone. If someone enters the room, the game will reset.
-- [x] At the beginning of the game, the number of words to be played with the language option and word lengths can be set.  
-- [ ] 5 points for finding the correct letter in the word.  
-- [ ] 3 points for finding the letter in the word but misplacing it.  
+- [ ] At the beginning of the game, the number of words to be played with the language option and word lengths can be set.  
+- [x] 5 points for finding the correct letter in the word.  
+- [x] 3 points for finding the letter in the word but misplacing it.  
 - [ ] If a player finds the letter in the word and the location is wrong and the next player sees the letter and locates it correctly, then 2 points from 5-3.  
 - [ ] if there is no letter in the word, no penalty for the first use but -1 point for the second use.  
 - [ ] If a correctly placed letter is not used in the next guess, a penalty of -2 points is awarded.  
-- [ ] If a word is used that is not in the game language, -2 points penalty. The word list is embedded in the project.  
-- [ ] If the player whose turn it doesn't answer within 10 seconds, it passes to the next player. -5 points penalty for repetition.  
-- [ ] Information will be received from the user for some settings of the game and the game will start accordingly.
+- [x] If a word is used that is not in the game language, -2 points penalty. The word list is embedded in the project.  
+- [ ] If the player whose turn it doesn't answer within 10 seconds, it passes to the next player. -5 points penalty for repetition.
 
 ## Getting Started
 
