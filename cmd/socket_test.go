@@ -165,7 +165,7 @@ func TestSocket_messageHandle(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
-			s.messageHandle(tt.args.conn)
+			s.chatHandle(tt.args.conn)
 		})
 	}
 }

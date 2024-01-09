@@ -3,7 +3,29 @@ body {
     font-size: 14px;
     background: #1F252D url("https://source.unsplash.com/random/1920x1080") no-repeat center fixed;
     background-size: cover;
+}
+
+#game{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
+}
+
+#error{
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 20%;
+    height: 10%;
+    padding: 1%;
+    color: white;
+    overflow: hidden;
+    border-radius: 10px;
+    background-color: #d2691ea8;
 }
 
 #title {

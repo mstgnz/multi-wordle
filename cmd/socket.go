@@ -38,6 +38,7 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 			s.emit(ws, Response{Type: "error", Message: err.Error()})
 			continue
 		}
+		fmt.Println("REQUEST: ", request)
 		switch request.Type {
 		case "login":
 			s.loginHandle(ws)
@@ -46,7 +47,7 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 		case "wordle":
 			s.wordleHandle(ws)
 		case "chat":
-			s.messageHandle(ws)
+			s.chatHandle(ws)
 		case "animate":
 			s.animateHandle(ws)
 		default:
@@ -77,7 +78,7 @@ func (s *Socket) loginHandle(ws *websocket.Conn) {
 	room, err := NewRoom("en", 3, 5, 5)
 	if err != nil || room == nil {
 		PLAYERS.DelPlayer(ws)
-		s.emit(ws, Response{Type: "error", Message: "Failed initialized", Room: room})
+		s.emit(ws, Response{Type: "fatal", Message: "Failed initialized", Room: room})
 		return
 	}
 	if len(room.Players) == 0 {
@@ -85,6 +86,7 @@ func (s *Socket) loginHandle(ws *websocket.Conn) {
 	}
 	room.Players[ws] = player
 	message := fmt.Sprintf("%s: connected", player.Name)
+	room.AddMessage(message)
 	HandleLog(message, nil)
 	s.broadcast(ws, Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 }
@@ -95,6 +97,7 @@ func (s *Socket) nameHandle(conn *websocket.Conn) {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s changed its name to %s", player.Name, request.Message)
 		player.SetName(request.Message)
+		room.AddMessage(message)
 		s.broadcast(conn, Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
@@ -103,24 +106,27 @@ func (s *Socket) nameHandle(conn *websocket.Conn) {
 func (s *Socket) wordleHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoom(conn); room != nil {
 		player := room.Players[conn]
+		message := fmt.Sprintf("player named %s made a prediction.", player.Name)
 		if room.Length == len(request.Message) {
 			wordle := strings.ToUpper(request.Message)
 			// If a word is used that is not in the game language, -2 points penalty. The word list is embedded in the project.
 			contains, err := ContainsWord(room.Length, room.Lang, wordle)
 			if !contains || err != nil {
 				player.Score -= 2
+				message += fmt.Sprintf("-2 points for entering a non-existent word.")
 			} else {
 				room.CheckWord(wordle, player)
 			}
-			s.broadcast(conn, Response{Type: request.Type, Message: "new wordle", Room: room, Player: player, Players: room.GetPlayers()})
 		} else {
-			s.emit(conn, Response{Type: "error", Message: "word count not matched", Room: room, Player: player, Players: room.GetPlayers()})
+			message = "the set word length does not match."
 		}
+		room.AddMessage(message)
+		s.broadcast(conn, Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
 
-// messageHandle Messages intra-room correspondence
-func (s *Socket) messageHandle(conn *websocket.Conn) {
+// chatHandle Messages intra-room correspondence
+func (s *Socket) chatHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoom(conn); room != nil {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s: %s", player.Name, request.Message)
@@ -150,10 +156,10 @@ func (s *Socket) limitHandle() error {
 func (s *Socket) disconnect(conn *websocket.Conn) {
 	if room := ROOMS.FindRoom(conn); room != nil {
 		player := room.Players[conn]
-		msg := fmt.Sprintf("%s disconnected", player.Name)
-		HandleLog(msg, nil)
+		message := fmt.Sprintf("%s disconnected", player.Name)
+		HandleLog(message, nil)
 		PLAYERS.DelPlayer(conn)
-		s.broadcast(conn, Response{Type: "disconnect", Message: msg, Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(conn, Response{Type: "disconnect", Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 		_ = conn.Close()
 	}
 }

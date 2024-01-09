@@ -15,6 +15,7 @@ class MultiWordle {
         this.form = document.getElementById("form")
         this.title = document.getElementById("title")
         this.input = document.getElementById("input")
+        this.error = document.getElementById("error")
         this.wordle = document.getElementById("wordle")
         this.alphabet = document.getElementById("alphabet")
         this.connected = document.getElementById("connected")
@@ -41,7 +42,7 @@ class MultiWordle {
             const response = JSON.parse(event.data)
             this.room = response.room
             this.players = response.players
-            this.title.innerHTML = this.room.id.toUpperCase()
+            this.title.innerHTML = this.room && this.room.id ? this.room.id.toUpperCase(): ""
             console.log(response)
             switch (response.type) {
                 case "login":
@@ -51,10 +52,7 @@ class MultiWordle {
                     this.handleAnimate(response)
                     break
                 case "chat":
-                    this.handleMessage(response)
-                    break
-                case "error":
-                    this.handleError(response)
+                    this.handleChat(response)
                     break
                 case "name":
                     this.handleName(response)
@@ -64,6 +62,12 @@ class MultiWordle {
                     break
                 case "disconnect":
                     this.handleDisconnect(response)
+                    break
+                case "error":
+                    this.handleError(response)
+                    break
+                case "fatal":
+                    this.handleFatal(response)
                     break
             }
         }
@@ -85,8 +89,7 @@ class MultiWordle {
         this.player = response.player
         this.initWordle()
         this.addPlayerToGameArea()
-        this.addMessageToChat(`[SERVER] ${response.message} connected`)
-        this.scrollTop()
+        this.handleChat(response)
     }
 
     handleAnimate(response) {
@@ -96,13 +99,21 @@ class MultiWordle {
         this.animateElement(player)
     }
 
-    handleMessage(response) {
+    handleChat(response) {
         this.messages = response.room.messages
         this.addMessageToChat(this.messages[this.messages.length -1])
         this.scrollTop()
     }
 
     handleError(response){
+        this.error.innerHTML = response.message
+        this.error.style.display = "block"
+        setTimeout(function () {
+            this.error.style.display = "none"
+        },2000)
+    }
+
+    handleFatal(response){
         this.connected.style.display = "none"
         this.unconnected.style.display = "block"
         this.unconnected.innerHTML = response.message
@@ -114,19 +125,20 @@ class MultiWordle {
             if(player){
                 this.changeName(player, response.message)
                 player.name = response.message
+                this.handleChat(response)
             }
         }
     }
 
     handleWordle(response) {
         this.room = response.room
+        this.handleChat(response)
         this.initWordle()
     }
 
     handleDisconnect(response) {
         this.players = this.players.filter((p) => p.name !== response.player.name);
-        this.addMessageToChat(`[SERVER]: ${response.player.name} disconnected`)
-        this.scrollTop()
+        this.handleChat(response)
     }
 
     scrollTop() {
@@ -150,7 +162,8 @@ class MultiWordle {
             JSON.stringify({
                 type: type,
                 message: message,
-                position: position
+                position: position,
+                token: this.player && this.player.token ? this.player.token : ""
             })
         )
     }
