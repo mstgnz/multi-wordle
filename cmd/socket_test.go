@@ -60,25 +60,6 @@ func TestSocket_animateHandle(t *testing.T) {
 	}
 }
 
-func TestSocket_broadcast(t *testing.T) {
-	type args struct {
-		conn     *websocket.Conn
-		response Response
-	}
-	tests := []struct {
-		args args
-	}{
-		// TODO: Add test cases.
-		{},
-	}
-	for i, tt := range tests {
-		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			s := &Socket{}
-			s.broadcast(tt.args.conn, tt.args.response)
-		})
-	}
-}
-
 func TestSocket_disconnect(t *testing.T) {
 	type args struct {
 		conn *websocket.Conn
@@ -202,6 +183,42 @@ func TestSocket_wordleHandle(t *testing.T) {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			s := &Socket{}
 			s.wordleHandle(tt.args.conn)
+		})
+	}
+}
+
+func TestSocket_broadcast(t *testing.T) {
+	type args struct {
+		response Response
+	}
+	tests := []struct {
+		args args
+	}{
+		// TODO: Add test cases.
+		{},
+	}
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			s := &Socket{}
+			s.broadcast(tt.args.response)
+		})
+	}
+}
+
+func TestSocket_broadcastAll(t *testing.T) {
+	type args struct {
+		response Response
+	}
+	tests := []struct {
+		args args
+	}{
+		// TODO: Add test cases.
+		{},
+	}
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			s := &Socket{}
+			s.broadcastAll(tt.args.response)
 		})
 	}
 }

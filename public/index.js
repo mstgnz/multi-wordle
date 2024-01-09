@@ -16,6 +16,7 @@ class MultiWordle {
         this.chat = document.getElementById("chat")
         this.form = document.getElementById("form")
         this.title = document.getElementById("title")
+        this.total = document.getElementById("total")
         this.input = document.getElementById("input")
         this.error = document.getElementById("error")
         this.wordle = document.getElementById("wordle")
@@ -55,9 +56,13 @@ class MultiWordle {
         // on message
         this.socket.onmessage = (event) => {
             this.response = JSON.parse(event.data)
-            this.room = this.response.room
-            this.players = this.response.players
-            this.title.innerHTML = this.room && this.room.name ? this.room.name.toUpperCase() : ""
+            if(this.response.room){
+                this.room = this.response.room
+                this.title.innerHTML = this.room && this.room.name ? this.room.name.toUpperCase() : ""
+            }
+            if(this.response.players){
+                this.players = this.response.players
+            }
             console.log(this.response)
             switch (this.response.type) {
                 case "login":
@@ -75,6 +80,8 @@ class MultiWordle {
                 case "wordle":
                     this.handleWordle()
                     break
+                case "total":
+                    this.handleTotal()
                 case "disconnect":
                     this.handleDisconnect()
                     break
@@ -116,6 +123,7 @@ class MultiWordle {
         this.animateElement(player)
     }
 
+
     handleChat = () => {
         this.messages = this.response.room.messages
         this.addMessageToChat(this.messages[this.messages.length - 1])
@@ -152,9 +160,15 @@ class MultiWordle {
         this.initWordle()
     }
 
+    handleTotal = () => {
+        this.total.innerHTML = this.response.message
+    }
+
     handleDisconnect = () => {
-        this.players = this.players.filter((p) => p.name !== this.response.player.name);
-        this.handleChat()
+        if(this.response.player){
+            this.players = this.players.filter((p) => p.name !== this.response.player.name);
+            this.handleChat()
+        }
     }
 
     scrollTop = () => {
@@ -281,6 +295,7 @@ class MultiWordle {
     }
 
     addPlayerToGameArea = () => {
+        this.game.innerHTML = ""
         this.players.forEach(player => {
             this.game.innerHTML += `<div class="circle" id="${player.name}" style="left:${player.position.x}px;top:${player.position.y}px; background-color: ${player.color}">
             <div class="relative">

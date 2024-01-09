@@ -53,7 +53,7 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 			HandleLog("invalid type: "+request.Type, nil)
 			s.emit(ws, Response{Type: "error", Message: "invalid type: " + request.Type})
 		}
-		fmt.Println("REQUEST: ", request, len(ROOMS), len(PLAYERS))
+		s.broadcastAll(Response{Type: "total", Message: fmt.Sprintf("total of %d rooms, total of %d players.", len(ROOMS), len(PLAYERS))})
 	}
 }
 
@@ -69,6 +69,15 @@ func (s *Socket) emit(ws *websocket.Conn, response Response) {
 func (s *Socket) broadcast(response Response) {
 	for ws := range response.Room.Players {
 		s.emit(ws, response)
+	}
+}
+
+// broadcastAll performs an emit operation to all users.
+func (s *Socket) broadcastAll(response Response) {
+	for _, player := range PLAYERS {
+		go func(conn *websocket.Conn) {
+			s.emit(conn, response)
+		}(player.Conn)
 	}
 }
 
