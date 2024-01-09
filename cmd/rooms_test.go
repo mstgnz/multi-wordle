@@ -38,7 +38,7 @@ func TestRooms_DelRoom(t *testing.T) {
 	}
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			tt.r.DelRoom()
+			tt.r.RemoveRoom()
 		})
 	}
 }

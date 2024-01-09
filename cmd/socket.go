@@ -38,7 +38,6 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 			s.emit(ws, Response{Type: "error", Message: err.Error()})
 			continue
 		}
-		fmt.Println("REQUEST: ", request)
 		switch request.Type {
 		case "login":
 			s.loginHandle(ws)
@@ -54,6 +53,7 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 			HandleLog("invalid type: "+request.Type, nil)
 			s.emit(ws, Response{Type: "error", Message: "invalid type: " + request.Type})
 		}
+		fmt.Println("REQUEST: ", request, len(ROOMS), len(PLAYERS))
 	}
 }
 
@@ -66,8 +66,8 @@ func (s *Socket) emit(ws *websocket.Conn, response Response) {
 }
 
 // broadcast The user receiving the action performs an emit operation to the user in the room to which it belongs.
-func (s *Socket) broadcast(conn *websocket.Conn, response Response) {
-	for ws := range ROOMS.FindRoomWithWs(conn).Players {
+func (s *Socket) broadcast(response Response) {
+	for ws := range response.Room.Players {
 		s.emit(ws, response)
 	}
 }
@@ -77,7 +77,7 @@ func (s *Socket) loginHandle(ws *websocket.Conn) {
 	// check token
 	if room, player := FindTokenPlayerAndRoom(request); room != nil && player != nil {
 		message := fmt.Sprintf("%s: re-connected", player.Name)
-		s.broadcast(ws, Response{Type: "error", Message: message, Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 		return
 	}
 	player := NewPlayer(ws)
@@ -94,7 +94,7 @@ func (s *Socket) loginHandle(ws *websocket.Conn) {
 	message := fmt.Sprintf("%s: connected", player.Name)
 	room.AddMessage(message)
 	HandleLog(message, nil)
-	s.broadcast(ws, Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
+	s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 }
 
 // nameHandle If a change name emit is received by the client, change the name of the corresponding user.
@@ -104,7 +104,7 @@ func (s *Socket) nameHandle(conn *websocket.Conn) {
 		message := fmt.Sprintf("%s changed its name to %s", player.Name, request.Message)
 		player.SetName(request.Message)
 		room.AddMessage(message)
-		s.broadcast(conn, Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
 
@@ -127,7 +127,7 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 			message = "the set word Length does not match."
 		}
 		room.AddMessage(message)
-		s.broadcast(conn, Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
 
@@ -137,7 +137,7 @@ func (s *Socket) chatHandle(conn *websocket.Conn) {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s: %s", player.Name, request.Message)
 		room.AddMessage(message)
-		s.broadcast(conn, Response{Type: request.Type, Message: "new message", Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(Response{Type: request.Type, Message: "new message", Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
 
@@ -146,7 +146,7 @@ func (s *Socket) animateHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
 		player.Position = request.Position
-		s.broadcast(conn, Response{Type: request.Type, Message: "animate", Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(Response{Type: request.Type, Message: "animate", Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
 
@@ -164,8 +164,9 @@ func (s *Socket) disconnect(conn *websocket.Conn) {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s disconnected", player.Name)
 		HandleLog(message, nil)
+		s.broadcast(Response{Type: "disconnect", Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 		PLAYERS.RemovePlayerWithWs(conn)
-		s.broadcast(conn, Response{Type: "disconnect", Message: message, Room: room, Player: player, Players: room.GetPlayers()})
+		ROOMS.RemoveRoom(room)
 		_ = conn.Close()
 	}
 }

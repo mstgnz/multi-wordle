@@ -180,7 +180,7 @@ class MultiWordle {
                 init: this.init,
                 message: message,
                 position: position,
-                token: this.wordleToken ? this.wordleToken.toString() : ""
+                token: this.wordleToken ?? ""
             })
         )
     }

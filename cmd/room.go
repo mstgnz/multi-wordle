@@ -65,9 +65,7 @@ func NewRoom(request Request) (*Room, error) {
 			Alphabet:  SetAlphabet(lang),
 		},
 	}
-
-	ROOMS = append(ROOMS, newRoom)
-	return newRoom, nil
+	return ROOMS.AddRoom(newRoom), nil
 }
 
 // AddMessage append message

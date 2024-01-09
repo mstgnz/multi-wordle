@@ -24,9 +24,7 @@ func NewPlayer(conn *websocket.Conn) *Player {
 		Position: Position{X: 0, Y: 0},
 		Conn:     conn,
 	}
-
-	PLAYERS = append(PLAYERS, player)
-	return player
+	return PLAYERS.AddPlayer(player)
 }
 
 func (p *Player) SetName(name string) {

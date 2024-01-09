@@ -9,7 +9,7 @@ type Rooms []*Room
 
 // AddRoom add room
 func (r *Rooms) AddRoom(room *Room) *Room {
-	*r = append(*r, room)
+	ROOMS = append(ROOMS, room)
 	return room
 }
 
@@ -23,10 +23,10 @@ func (r *Rooms) FindRoomWithWs(conn *websocket.Conn) *Room {
 	return nil
 }
 
-// DelRoom delete the room if there are no players in the room
-func (r *Rooms) DelRoom() {
-	for i, room := range *r {
-		if len(room.Players) == 0 {
+// RemoveRoom delete the room if there are no players in the room
+func (r *Rooms) RemoveRoom(room *Room) {
+	for i, rm := range *r {
+		if rm == room {
 			*r = append((*r)[:i], (*r)[i+1:]...)
 			return
 		}

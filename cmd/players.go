@@ -9,7 +9,7 @@ type Players []*Player
 
 // AddPlayer add player
 func (p *Players) AddPlayer(player *Player) *Player {
-	*p = append(*p, player)
+	PLAYERS = append(PLAYERS, player)
 	return player
 }
 
