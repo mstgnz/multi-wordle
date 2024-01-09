@@ -67,24 +67,30 @@ func (s *Socket) emit(ws *websocket.Conn, response Response) {
 
 // broadcast The user receiving the action performs an emit operation to the user in the room to which it belongs.
 func (s *Socket) broadcast(conn *websocket.Conn, response Response) {
-	for ws := range ROOMS.FindRoom(conn).Players {
+	for ws := range ROOMS.FindRoomWithWs(conn).Players {
 		s.emit(ws, response)
 	}
 }
 
 // loginHandle If login emit is received by the client, create a new user and assign it to the room.
 func (s *Socket) loginHandle(ws *websocket.Conn) {
+	// check token
+	if room, player := FindTokenPlayerAndRoom(request); room != nil && player != nil {
+		message := fmt.Sprintf("%s: re-connected", player.Name)
+		s.broadcast(ws, Response{Type: "error", Message: message, Room: room, Player: player, Players: room.GetPlayers()})
+		return
+	}
 	player := NewPlayer(ws)
 	room, err := NewRoom(request)
 	if err != nil || room == nil {
-		PLAYERS.DelPlayer(ws)
+		PLAYERS.RemovePlayerWithWs(ws)
 		s.emit(ws, Response{Type: "fatal", Message: "Failed initialized", Room: room})
 		return
 	}
-	if len(room.Players) == 0 {
+	room.Players[ws] = player
+	if len(room.Players) == 1 {
 		player.IsGuessing = true
 	}
-	room.Players[ws] = player
 	message := fmt.Sprintf("%s: connected", player.Name)
 	room.AddMessage(message)
 	HandleLog(message, nil)
@@ -93,7 +99,7 @@ func (s *Socket) loginHandle(ws *websocket.Conn) {
 
 // nameHandle If a change name emit is received by the client, change the name of the corresponding user.
 func (s *Socket) nameHandle(conn *websocket.Conn) {
-	if room := ROOMS.FindRoom(conn); room != nil {
+	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s changed its name to %s", player.Name, request.Message)
 		player.SetName(request.Message)
@@ -104,7 +110,7 @@ func (s *Socket) nameHandle(conn *websocket.Conn) {
 
 // wordleHandle word predictions operations
 func (s *Socket) wordleHandle(conn *websocket.Conn) {
-	if room := ROOMS.FindRoom(conn); room != nil {
+	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
 		message := fmt.Sprintf("player named %s made a prediction.", player.Name)
 		if room.Length == len(request.Message) {
@@ -127,7 +133,7 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 
 // chatHandle Messages intra-room correspondence
 func (s *Socket) chatHandle(conn *websocket.Conn) {
-	if room := ROOMS.FindRoom(conn); room != nil {
+	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s: %s", player.Name, request.Message)
 		room.AddMessage(message)
@@ -137,7 +143,7 @@ func (s *Socket) chatHandle(conn *websocket.Conn) {
 
 // animateHandle player position change on the screen
 func (s *Socket) animateHandle(conn *websocket.Conn) {
-	if room := ROOMS.FindRoom(conn); room != nil {
+	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
 		player.Position = request.Position
 		s.broadcast(conn, Response{Type: request.Type, Message: "animate", Room: room, Player: player, Players: room.GetPlayers()})
@@ -154,11 +160,11 @@ func (s *Socket) limitHandle() error {
 
 // disconnect
 func (s *Socket) disconnect(conn *websocket.Conn) {
-	if room := ROOMS.FindRoom(conn); room != nil {
+	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s disconnected", player.Name)
 		HandleLog(message, nil)
-		PLAYERS.DelPlayer(conn)
+		PLAYERS.RemovePlayerWithWs(conn)
 		s.broadcast(conn, Response{Type: "disconnect", Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 		_ = conn.Close()
 	}

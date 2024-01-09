@@ -42,7 +42,7 @@ func TestPlayers_DelPlayer(t *testing.T) {
 	}
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			tt.p.DelPlayer(tt.args.conn)
+			tt.p.RemovePlayerWithWs(tt.args.conn)
 		})
 	}
 }
@@ -61,8 +61,8 @@ func TestPlayers_FindPlayer(t *testing.T) {
 	}
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			if got := tt.p.FindPlayer(tt.args.conn); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FindPlayer() = %v, want %v", got, tt.want)
+			if got := tt.p.FindPlayerWithWs(tt.args.conn); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FindPlayerWithWs() = %v, want %v", got, tt.want)
 			}
 		})
 	}

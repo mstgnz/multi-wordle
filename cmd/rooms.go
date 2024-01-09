@@ -13,8 +13,8 @@ func (r *Rooms) AddRoom(room *Room) *Room {
 	return room
 }
 
-// FindRoom find the room by connection
-func (r *Rooms) FindRoom(conn *websocket.Conn) *Room {
+// FindRoomWithWs find the room by connection
+func (r *Rooms) FindRoomWithWs(conn *websocket.Conn) *Room {
 	for _, room := range *r {
 		if _, ok := room.Players[conn]; ok {
 			return room

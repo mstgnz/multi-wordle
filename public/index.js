@@ -19,6 +19,7 @@ class MultiWordle {
         this.input = document.getElementById("input")
         this.error = document.getElementById("error")
         this.wordle = document.getElementById("wordle")
+        this.wordleToken = localStorage.getItem("wordle-token")
         this.alphabet = document.getElementById("alphabet")
         this.initForm = document.getElementById("init-form")
         this.connected = document.getElementById("connected")
@@ -37,14 +38,18 @@ class MultiWordle {
 
         // on open
         this.socket.onopen = () => {
-            this.initForm.addEventListener("submit", (event) => {
-                event.preventDefault()
-                this.init.lang = this.initForm.querySelector('#room-lang').value.toString()
-                this.init.limit = parseInt(this.initForm.querySelector('#set-count').value)
-                this.init.length = parseInt(this.initForm.querySelector('#wordle-length').value)
-                this.init.trial = parseInt(this.initForm.querySelector('#wordle-trial').value)
+            if(this.wordleToken){
                 this.send("login")
-            })
+            }else{
+                this.initForm.addEventListener("submit", (event) => {
+                    event.preventDefault()
+                    this.init.lang = this.initForm.querySelector('#room-lang').value.toString()
+                    this.init.limit = parseInt(this.initForm.querySelector('#set-count').value)
+                    this.init.length = parseInt(this.initForm.querySelector('#wordle-length').value)
+                    this.init.trial = parseInt(this.initForm.querySelector('#wordle-trial').value)
+                    this.send("login")
+                })
+            }
         }
 
         // on message
@@ -52,11 +57,11 @@ class MultiWordle {
             this.response = JSON.parse(event.data)
             this.room = this.response.room
             this.players = this.response.players
-            this.title.innerHTML = this.room && this.room.id ? this.room.id.toUpperCase() : ""
+            this.title.innerHTML = this.room && this.room.name ? this.room.name.toUpperCase() : ""
             console.log(this.response)
             switch (this.response.type) {
                 case "login":
-                    this.handleNewPlayer()
+                    this.handleLogin()
                     break
                 case "animate":
                     this.handleAnimate()
@@ -94,7 +99,7 @@ class MultiWordle {
         }
     }
 
-    handleNewPlayer = () => {
+    handleLogin = () => {
         this.player = this.response.player
         localStorage.setItem("wordle-token", this.player.token)
         this.initWordle()
@@ -122,7 +127,7 @@ class MultiWordle {
         this.error.style.display = "block"
         setTimeout(function () {
             this.error.style.display = "none"
-        }, 5000)
+        }.bind(this), 5000)
     }
 
     handleFatal = () => {
@@ -169,14 +174,13 @@ class MultiWordle {
     }
 
     send = (type, message = "", position = {}) => {
-        const wordleToken = localStorage.getItem("wordle-token").toString()
         this.socket.send(
             JSON.stringify({
                 type: type,
                 init: this.init,
                 message: message,
                 position: position,
-                token: wordleToken ? wordleToken.toString() : ""
+                token: this.wordleToken ? this.wordleToken.toString() : ""
             })
         )
     }

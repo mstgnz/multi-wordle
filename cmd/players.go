@@ -13,8 +13,8 @@ func (p *Players) AddPlayer(player *Player) *Player {
 	return player
 }
 
-// FindPlayer find player with ws
-func (p *Players) FindPlayer(conn *websocket.Conn) *Player {
+// FindPlayerWithWs find player with ws
+func (p *Players) FindPlayerWithWs(conn *websocket.Conn) *Player {
 	for _, player := range *p {
 		if player.Conn == conn {
 			return player
@@ -23,8 +23,8 @@ func (p *Players) FindPlayer(conn *websocket.Conn) *Player {
 	return nil
 }
 
-// FindToken find player with token
-func (p *Players) FindToken(token string) *Player {
+// FindPlayerWithToken find player with token
+func (p *Players) FindPlayerWithToken(token string) *Player {
 	for _, player := range *p {
 		if player.Token == token {
 			return player
@@ -33,8 +33,8 @@ func (p *Players) FindToken(token string) *Player {
 	return nil
 }
 
-// DelPlayer delete player
-func (p *Players) DelPlayer(conn *websocket.Conn) {
+// RemovePlayerWithWs delete player
+func (p *Players) RemovePlayerWithWs(conn *websocket.Conn) {
 	for i, player := range *p {
 		if player.Conn == conn {
 			*p = append((*p)[:i], (*p)[i+1:]...)

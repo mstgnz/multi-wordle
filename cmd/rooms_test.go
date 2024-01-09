@@ -57,8 +57,8 @@ func TestRooms_FindRoom(t *testing.T) {
 	}
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			if got := tt.r.FindRoom(tt.args.conn); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FindRoom() = %v, want %v", got, tt.want)
+			if got := tt.r.FindRoomWithWs(tt.args.conn); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FindRoomWithWs() = %v, want %v", got, tt.want)
 			}
 		})
 	}

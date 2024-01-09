@@ -208,3 +208,16 @@ func InitRoom(request Request) (string, int, int, int) {
 	}
 	return lang, limit, length, trial
 }
+
+// FindTokenPlayerAndRoom when the user refreshes the page, the user and the room belonging to that user
+// will be found with the token. if there is a player matching the token, the existing player will return,
+// if not, a new login will be created.
+func FindTokenPlayerAndRoom(request Request) (*Room, *Player) {
+	var room *Room
+	var player *Player
+	player = PLAYERS.FindPlayerWithToken(request.Token)
+	if player != nil {
+		room = ROOMS.FindRoomWithWs(player.Conn)
+	}
+	return room, player
+}

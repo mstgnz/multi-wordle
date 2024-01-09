@@ -10,10 +10,7 @@ import (
 
 func TestNewRoom(t *testing.T) {
 	type args struct {
-		lang   string
-		limit  int
-		length int
-		trial  int
+		request Request
 	}
 	tests := []struct {
 		args    args
@@ -25,7 +22,7 @@ func TestNewRoom(t *testing.T) {
 	}
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			got, err := NewRoom(tt.args.lang, tt.args.limit, tt.args.length, tt.args.trial)
+			got, err := NewRoom(tt.args.request)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NewRoom() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -40,10 +37,10 @@ func TestNewRoom(t *testing.T) {
 func TestRoom_AddMessage(t *testing.T) {
 	type fields struct {
 		ID         string
+		Lang       string
 		Limit      int
 		Length     int
 		Trial      int
-		Lang       string
 		Messages   []string
 		Wordle     *Wordle
 		Matches    []*Wordle
@@ -63,11 +60,11 @@ func TestRoom_AddMessage(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			r := &Room{
-				ID:         tt.fields.ID,
+				Name:       tt.fields.ID,
+				Lang:       tt.fields.Lang,
 				Limit:      tt.fields.Limit,
 				Length:     tt.fields.Length,
 				Trial:      tt.fields.Trial,
-				Lang:       tt.fields.Lang,
 				Messages:   tt.fields.Messages,
 				Wordle:     tt.fields.Wordle,
 				Matches:    tt.fields.Matches,
@@ -82,10 +79,10 @@ func TestRoom_AddMessage(t *testing.T) {
 func TestRoom_CheckWord(t *testing.T) {
 	type fields struct {
 		ID         string
+		Lang       string
 		Limit      int
 		Length     int
 		Trial      int
-		Lang       string
 		Messages   []string
 		Wordle     *Wordle
 		Matches    []*Wordle
@@ -106,11 +103,11 @@ func TestRoom_CheckWord(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			r := &Room{
-				ID:         tt.fields.ID,
+				Name:       tt.fields.ID,
+				Lang:       tt.fields.Lang,
 				Limit:      tt.fields.Limit,
 				Length:     tt.fields.Length,
 				Trial:      tt.fields.Trial,
-				Lang:       tt.fields.Lang,
 				Messages:   tt.fields.Messages,
 				Wordle:     tt.fields.Wordle,
 				Matches:    tt.fields.Matches,
@@ -125,10 +122,10 @@ func TestRoom_CheckWord(t *testing.T) {
 func TestRoom_GetPlayers(t *testing.T) {
 	type fields struct {
 		ID         string
+		Lang       string
 		Limit      int
 		Length     int
 		Trial      int
-		Lang       string
 		Messages   []string
 		Wordle     *Wordle
 		Matches    []*Wordle
@@ -145,11 +142,11 @@ func TestRoom_GetPlayers(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			r := &Room{
-				ID:         tt.fields.ID,
+				Name:       tt.fields.ID,
+				Lang:       tt.fields.Lang,
 				Limit:      tt.fields.Limit,
 				Length:     tt.fields.Length,
 				Trial:      tt.fields.Trial,
-				Lang:       tt.fields.Lang,
 				Messages:   tt.fields.Messages,
 				Wordle:     tt.fields.Wordle,
 				Matches:    tt.fields.Matches,
@@ -166,10 +163,10 @@ func TestRoom_GetPlayers(t *testing.T) {
 func TestRoom_Reset(t *testing.T) {
 	type fields struct {
 		ID         string
+		Lang       string
 		Limit      int
 		Length     int
 		Trial      int
-		Lang       string
 		Messages   []string
 		Wordle     *Wordle
 		Matches    []*Wordle
@@ -187,11 +184,11 @@ func TestRoom_Reset(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			r := &Room{
-				ID:         tt.fields.ID,
+				Name:       tt.fields.ID,
+				Lang:       tt.fields.Lang,
 				Limit:      tt.fields.Limit,
 				Length:     tt.fields.Length,
 				Trial:      tt.fields.Trial,
-				Lang:       tt.fields.Lang,
 				Messages:   tt.fields.Messages,
 				Wordle:     tt.fields.Wordle,
 				Matches:    tt.fields.Matches,

@@ -11,8 +11,8 @@ import (
 // socket operations will take place through the room.
 // room object will be sent as a response. room object is the room of the user taking action.
 type Room struct {
-	// Room ID
-	ID string `json:"id"`
+	// Room Name
+	Name string `json:"name"`
 	// Limit how many matches will be played
 	Lang string `json:"lang"`
 	// Messages intra-room correspondence
@@ -53,7 +53,7 @@ func NewRoom(request Request) (*Room, error) {
 	}
 
 	newRoom := &Room{
-		ID:      fmt.Sprintf("room_%d", len(ROOMS)+1),
+		Name:    fmt.Sprintf("room_%d", len(ROOMS)+1),
 		Players: make(map[*websocket.Conn]*Player),
 		Lang:    lang,
 		Limit:   limit,
