@@ -4,6 +4,7 @@ This project is licensed under the MIT Licence. Refer to https://github.com/mstg
 */
 class MultiWordle {
     constructor() {
+        this.init = {}
         this.room = null;
         this.objSize = 0;
         this.player = {}
@@ -19,6 +20,7 @@ class MultiWordle {
         this.error = document.getElementById("error")
         this.wordle = document.getElementById("wordle")
         this.alphabet = document.getElementById("alphabet")
+        this.initForm = document.getElementById("init-form")
         this.connected = document.getElementById("connected")
         this.wordleBox = document.getElementById("wordle-box")
         this.unconnected = document.getElementById("unconnected")
@@ -31,11 +33,18 @@ class MultiWordle {
         this.socketProcess()
     }
 
-    socketProcess() {
+    socketProcess = () => {
 
         // on open
         this.socket.onopen = () => {
-            this.send("login")
+            this.initForm.addEventListener("submit", (event) => {
+                event.preventDefault()
+                this.init.lang = this.initForm.querySelector('#room-lang').value.toString()
+                this.init.limit = parseInt(this.initForm.querySelector('#set-count').value)
+                this.init.length = parseInt(this.initForm.querySelector('#wordle-length').value)
+                this.init.trial = parseInt(this.initForm.querySelector('#wordle-trial').value)
+                this.send("login")
+            })
         }
 
         // on message
@@ -43,7 +52,7 @@ class MultiWordle {
             this.response = JSON.parse(event.data)
             this.room = this.response.room
             this.players = this.response.players
-            this.title.innerHTML = this.room && this.room.id ? this.room.id.toUpperCase(): ""
+            this.title.innerHTML = this.room && this.room.id ? this.room.id.toUpperCase() : ""
             console.log(this.response)
             switch (this.response.type) {
                 case "login":
@@ -85,43 +94,45 @@ class MultiWordle {
         }
     }
 
-    handleNewPlayer() {
+    handleNewPlayer = () => {
         this.player = this.response.player
         this.initWordle()
         this.addPlayerToGameArea()
         this.handleChat()
+        this.initForm.style.display = "none"
+        this.connected.style.display = "block"
     }
 
-    handleAnimate() {
+    handleAnimate = () => {
         const player = this.players.find((player) => player.name === this.response.player.name)
         player.position.x = this.response.player.position.x;
         player.position.y = this.response.player.position.y;
         this.animateElement(player)
     }
 
-    handleChat() {
+    handleChat = () => {
         this.messages = this.response.room.messages
-        this.addMessageToChat(this.messages[this.messages.length -1])
+        this.addMessageToChat(this.messages[this.messages.length - 1])
         this.scrollTop()
     }
 
-    handleError(error){
+    handleError = (error) => {
         this.error.innerHTML = error ? error : this.response.message
         this.error.style.display = "block"
         setTimeout(function () {
             this.error.style.display = "none"
-        },5000)
+        }, 5000)
     }
 
-    handleFatal(){
+    handleFatal = () => {
         this.close()
         this.unconnected.innerHTML = this.response.message
     }
 
-    handleName() {
+    handleName = () => {
         if (this.response.player.name !== this.player.name) {
             const player = this.players.find((player) => player.name === this.response.player.name)
-            if(player){
+            if (player) {
                 this.changeName(player, this.response.message)
                 player.name = this.response.message
                 this.handleChat(this.response)
@@ -129,26 +140,26 @@ class MultiWordle {
         }
     }
 
-    handleWordle() {
+    handleWordle = () => {
         this.handleChat()
         this.changeScore()
         this.initWordle()
     }
 
-    handleDisconnect() {
+    handleDisconnect = () => {
         this.players = this.players.filter((p) => p.name !== this.response.player.name);
         this.handleChat()
     }
 
-    scrollTop() {
+    scrollTop = () => {
         setTimeout(() => {
             this.chat.scrollTop = this.chat.scrollHeight;
         })
     }
 
-    animateElement(player) {
+    animateElement = (player) => {
         const element = document.getElementById(player.name)
-        if(element){
+        if (element) {
             const center = this.objSize / 2;
             element.style.left = (player.position.x - center) + "px";
             element.style.top = (player.position.y - center) + "px";
@@ -156,10 +167,11 @@ class MultiWordle {
         }
     }
 
-    send(type, message = "", position = {}) {
+    send = (type, message = "", position = {}) => {
         this.socket.send(
             JSON.stringify({
                 type: type,
+                init: this.init,
                 message: message,
                 position: position,
                 token: this.player && this.player.token ? this.player.token : ""
@@ -169,31 +181,34 @@ class MultiWordle {
 
     onMessage = (event) => {
         if (event.key === "Enter" && this.input.value.length) {
-            this.send("chat", this.input.value)
-            this.showBubble(this.player.name, this.input.value)
-            this.checkCommand(this.input.value)
+            const value = this.input.value.trim()
+            if(value.length !== 0){
+                this.send("chat", value)
+                this.showBubble(this.player.name, value)
+                this.checkCommand(value)
+            }
             this.input.value = "";
         }
     }
 
     onClickPlayer = (event) => {
         const element = document.getElementById(this.player.name)
-        if(element){
+        if (element) {
             this.objSize = element.offsetWidth;
             const center = this.objSize / 2;
             this.player.position.x = event.offsetX - center;
             this.player.position.y = event.offsetY - center;
             if (!this.isAnimate) {
                 this.isAnimate = true;
-                this.send("animate","", {"x":event.offsetX - center, "y":event.offsetY - center})
+                this.send("animate", "", {"x": event.offsetX - center, "y": event.offsetY - center})
                 this.animateElement(this.player)
             }
         }
     }
 
-    showBubble(name, message) {
+    showBubble = (name, message) => {
         const element = document.getElementById(name)
-        if(element){
+        if (element) {
             const messageElement = element.querySelector('.message')
             messageElement.style.display = 'block';
             messageElement.innerHTML = message;
@@ -203,7 +218,7 @@ class MultiWordle {
         }
     }
 
-    bubbleLifeTime(message) {
+    bubbleLifeTime = (message) => {
         const min = 500;
         const max = 3000;
         const msPerLetter = 40;
@@ -211,9 +226,9 @@ class MultiWordle {
         return bubbleTime > max ? max : bubbleTime;
     }
 
-    checkCommand(command){
-        command = command.split(" ")
-        if(command[1]) {
+    checkCommand = (command) => {
+        command = command.trim().split(" ")
+        if (command[1]) {
             switch (command[0]) {
                 case ":change-name":
                     const newName = command[1].substring(0, 5)
@@ -226,15 +241,15 @@ class MultiWordle {
                     document.body.style.backgroundImage = `url(${newBg})`
                     break
                 case ":wordle":
-                    if(this.room.len === command[1].length){
+                    if (this.room.len === command[1].length) {
                         this.send("wordle", command[1])
-                    }else{
+                    } else {
                         this.handleError(`The number of letters in this word "${command[1]}" does not match.`)
                     }
                     break
             }
         }
-        if(command[0] === ":change-bg"){
+        if (command[0] === ":change-bg") {
             fetch("https://source.unsplash.com/random/1920x1080").then((response) => {
                 if (response.ok) {
                     document.body.style.backgroundImage = `url(${response.url})`
@@ -243,23 +258,23 @@ class MultiWordle {
         }
     }
 
-    changeName(player, name){
+    changeName = (player, name) => {
         const element = document.getElementById(player.name)
-        if(element){
+        if (element) {
             const nameElement = element.querySelector('.name')
             nameElement.innerHTML = name
         }
     }
 
-    changeScore(){
+    changeScore = () => {
         const element = document.getElementById(this.response.player.name)
-        if(element){
+        if (element) {
             const nameElement = element.querySelector('.score')
-            nameElement.innerHTML = "S: "+ this.response.player.score
+            nameElement.innerHTML = "S: " + this.response.player.score
         }
     }
 
-    addPlayerToGameArea() {
+    addPlayerToGameArea = () => {
         this.players.forEach(player => {
             this.game.innerHTML += `<div class="circle" id="${player.name}" style="left:${player.position.x}px;top:${player.position.y}px; background-color: ${player.color}">
             <div class="relative">
@@ -271,7 +286,7 @@ class MultiWordle {
         })
     }
 
-    addMessageToChat(message) {
+    addMessageToChat = (message) => {
         this.chat.innerHTML += `<div class="item">
             <div class="content">
                 <span>${message}</span>
@@ -280,7 +295,7 @@ class MultiWordle {
     }
 
     // wordle layout initialization
-    initWordle(){
+    initWordle = () => {
         this.wordleBox.innerHTML = ""
         this.alphabet.innerHTML = ""
         // set wordle
@@ -290,8 +305,8 @@ class MultiWordle {
             for (let j = 0; j < this.room.len; j++) {
                 const wordleItem = document.createElement("div");
                 wordleItem.classList.add("wordle-item");
-                const forecast = this.getLetter(i,j)
-                if(forecast){
+                const forecast = this.getLetter(i, j)
+                if (forecast) {
                     wordleItem.textContent = String.fromCharCode(forecast.letter)
                     wordleItem.style.backgroundColor = forecast.color
                 }
@@ -315,7 +330,7 @@ class MultiWordle {
         }
     }
 
-    chapter(array) {
+    chapter = (array) => {
         const pieceLength = Math.ceil(array.length / 3);
         const splitArray = [];
         for (let i = 0; i < array.length; i += pieceLength) {
@@ -325,7 +340,7 @@ class MultiWordle {
         return splitArray;
     }
 
-    getLetter(i,j){
+    getLetter = (i, j) => {
         const forecasts = this.room.wordle.forecasts;
         if (i >= 0 && i < forecasts.length && j >= 0) {
             const forecastI = forecasts[i];
@@ -336,7 +351,7 @@ class MultiWordle {
         return null
     }
 
-    close(){
+    close = () => {
         this.connected.style.display = "none"
         this.unconnected.style.display = "block"
     }

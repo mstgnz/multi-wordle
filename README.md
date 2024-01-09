@@ -11,7 +11,7 @@ There is only a two-player version with websocket and a scoring system. Each pla
 ### Features
 - [x] There will be rooms for two people.
 - [x] If there's only one person in the room, it's a single game. He can play alone. If someone enters the room, the game will reset.
-- [ ] At the beginning of the game, the number of words to be played with the language option and word lengths can be set.  
+- [x] At the beginning of the game, the number of words to be played with the language option and word lengths can be set.  
 - [x] 5 points for finding the correct letter in the word.  
 - [x] 3 points for finding the letter in the word but misplacing it.  
 - [ ] If a player finds the letter in the word and the location is wrong and the next player sees the letter and locates it correctly, then 2 points from 5-3.  

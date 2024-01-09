@@ -14,14 +14,14 @@ type Room struct {
 	// Room ID
 	ID string `json:"id"`
 	// Limit how many matches will be played
-	Limit int
+	Lang string `json:"lang"`
+	// Messages intra-room correspondence
+	Limit int `json:"limit"`
 	// Word Length
 	Length int `json:"len"`
 	// Trial Number of word prediction trials
 	Trial int `json:"trial"`
 	// Lang word language to be predicted
-	Lang string
-	// Messages intra-room correspondence
 	Messages []string `json:"messages"`
 	// Wordle It provides the word to be guessed and the necessary checks and coloring for each guess.
 	Wordle *Wordle `json:"wordle"`
@@ -38,8 +38,9 @@ type Room struct {
 // NewRoom When a user is connected, if there is a room with 1 user,
 // the user will enter that room, if not,
 // a new room will be created and the user will enter there.
-func NewRoom(lang string, limit, length, trial int) (*Room, error) {
-
+func NewRoom(request Request) (*Room, error) {
+	// initialized room settings
+	lang, limit, length, trial := InitRoom(request)
 	for _, room := range ROOMS {
 		if room.Lang == lang && room.Limit == limit && room.Length == length && room.Trial == trial && len(room.Players) < 2 {
 			return room, nil

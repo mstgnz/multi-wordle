@@ -75,7 +75,7 @@ func (s *Socket) broadcast(conn *websocket.Conn, response Response) {
 // loginHandle If login emit is received by the client, create a new user and assign it to the room.
 func (s *Socket) loginHandle(ws *websocket.Conn) {
 	player := NewPlayer(ws)
-	room, err := NewRoom("en", 3, 5, 5)
+	room, err := NewRoom(request)
 	if err != nil || room == nil {
 		PLAYERS.DelPlayer(ws)
 		s.emit(ws, Response{Type: "fatal", Message: "Failed initialized", Room: room})
@@ -118,7 +118,7 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 				room.CheckWord(wordle, player)
 			}
 		} else {
-			message = "the set word length does not match."
+			message = "the set word Length does not match."
 		}
 		room.AddMessage(message)
 		s.broadcast(conn, Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
@@ -144,10 +144,10 @@ func (s *Socket) animateHandle(conn *websocket.Conn) {
 	}
 }
 
-// limitHandle game max limit
+// limitHandle game max Limit
 func (s *Socket) limitHandle() error {
 	if len(PLAYERS) > MaxConnection {
-		return errors.New("maximum limit reached")
+		return errors.New("maximum Limit reached")
 	}
 	return nil
 }

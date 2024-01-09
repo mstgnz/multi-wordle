@@ -58,7 +58,7 @@ func SetAlphabet(lang string) []Alphabet {
 func GetWords(lang string, length int) (string, error) {
 	// Specify the file name and path
 	_, currentFile, _, _ := runtime.Caller(0)
-	filePath := filepath.Join(filepath.Dir(currentFile), "lang", lang, fmt.Sprintf("%d_letter_words.txt", length))
+	filePath := filepath.Join(filepath.Dir(currentFile), "Lang", lang, fmt.Sprintf("%d_letter_words.txt", length))
 
 	// Open the file
 	file, err := os.Open(filePath)
@@ -124,6 +124,7 @@ func GetWordFromFile(file *os.File, lineNo int) (string, error) {
 	return "", errors.New(fmt.Sprintf("Specified line not found: %d", lineNo))
 }
 
+// ExistsLetter check if there are letters in the word.
 func ExistsLetter(word string, letter byte) bool {
 	for i := 0; i < len(word); i++ {
 		if word[i] == letter {
@@ -133,7 +134,7 @@ func ExistsLetter(word string, letter byte) bool {
 	return false
 }
 
-// RandomName returns a random string of letters of length n, using characters specified in randomStringSource.
+// RandomName returns a random string of letters of Length n, using characters specified in randomStringSource.
 func RandomName(n int) string {
 	// randomStringSource is the source for generating random strings.
 	const randomStringSource = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321_"
@@ -156,10 +157,11 @@ func RGB() int {
 	return rand.Intn(256)
 }
 
+// ContainsWord the predicted word is checked to see if it exists in the language used.
 func ContainsWord(length int, lang, word string) (bool, error) {
 	// Specify the file name and path
 	_, currentFile, _, _ := runtime.Caller(0)
-	filePath := filepath.Join(filepath.Dir(currentFile), "lang", lang, fmt.Sprintf("%d_letter_words.txt", length))
+	filePath := filepath.Join(filepath.Dir(currentFile), "Lang", lang, fmt.Sprintf("%d_letter_words.txt", length))
 
 	// Open the file
 	file, err := os.Open(filePath)
@@ -180,6 +182,29 @@ func ContainsWord(length int, lang, word string) (bool, error) {
 	return false, nil
 }
 
+// GenerateToken If the user is the same user when the user refreshes the page,
+// it is necessary to take action accordingly.
+// For this, we created a special token for each user.
 func GenerateToken() string {
 	return fmt.Sprintf("%d", time.Now().UnixNano())
+}
+
+// InitRoom When the user first enters the page, they are greeted with a form that asks for the language of the game,
+// number of sets, word length and number of attempts. This information can be entered or start with default values.
+// if there is a value, it is set.
+func InitRoom(request Request) (string, int, int, int) {
+	var lang, limit, length, trial = "en", 3, 5, 5
+	if request.Init.Lang == "tr" {
+		lang = "tr"
+	}
+	if request.Init.Limit >= 1 && request.Init.Limit <= 9 {
+		limit = request.Init.Limit
+	}
+	if request.Init.Length >= 1 && request.Init.Length <= 9 {
+		length = request.Init.Length
+	}
+	if request.Init.Trial >= 1 && request.Init.Trial <= 9 {
+		trial = request.Init.Trial
+	}
+	return lang, limit, length, trial
 }
