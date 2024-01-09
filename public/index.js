@@ -82,6 +82,7 @@ class MultiWordle {
                     break
                 case "total":
                     this.handleTotal()
+                    break;
                 case "disconnect":
                     this.handleDisconnect()
                     break
