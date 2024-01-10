@@ -24,6 +24,8 @@ type Room struct {
 	Start bool `json:"start"`
 	// Trial Number of word prediction trials
 	Trial int `json:"trial"`
+	// Timeout prediction time
+	Timeout int `json:"timeout"`
 	// Messages intra-room correspondence
 	Messages []string `json:"messages"`
 	// Wordle It provides the word to be guessed and the necessary checks and coloring for each guess.
@@ -43,7 +45,7 @@ type Room struct {
 // a new room will be created and the user will enter there.
 func NewRoom(request Request) (*Room, error) {
 	// initialized room settings
-	lang, limit, length, trial := InitRoom(request)
+	lang, limit, length, trial, timeout := InitRoom(request)
 	for _, room := range ROOMS {
 		if !room.Start && room.Lang == lang && room.Limit == limit && room.Length == length && room.Trial == trial && len(room.Players) < 2 {
 			return room, nil
@@ -62,6 +64,7 @@ func NewRoom(request Request) (*Room, error) {
 		Limit:   limit,
 		Length:  length,
 		Trial:   trial,
+		Timeout: timeout,
 		Wordle: &Wordle{
 			Word:      getWord,
 			Forecasts: make([]Forecasts, 0),
@@ -91,6 +94,7 @@ func (r *Room) GetPlayers() []*Player {
 func (r *Room) NextMatch() (*Room, error) {
 	// check limit
 	if r.Limit == len(r.Matches) {
+		r.Start = false
 		return r, errors.New("all matches have been completed")
 	}
 	// switch next match
@@ -163,6 +167,16 @@ func (r *Room) NextGuessing(conn *websocket.Conn) {
 			}
 		}
 	}
+}
+
+// FindGuessing who's next
+func (r *Room) FindGuessing() *Player {
+	for ws := range r.Players {
+		if r.Players[ws].IsGuessing {
+			return r.Players[ws]
+		}
+	}
+	return nil
 }
 
 // ResetMatch reset match

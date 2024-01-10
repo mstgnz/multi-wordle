@@ -9,8 +9,9 @@ type Request struct {
 }
 
 type Init struct {
-	Lang   string `json:"lang,omitempty"`
-	Limit  int    `json:"limit,omitempty"`
-	Length int    `json:"length,omitempty"`
-	Trial  int    `json:"trial,omitempty"`
+	Lang    string `json:"lang,omitempty"`
+	Limit   int    `json:"limit,omitempty"`
+	Length  int    `json:"length,omitempty"`
+	Trial   int    `json:"trial,omitempty"`
+	Timeout int    `json:"timeout,omitempty"`
 }

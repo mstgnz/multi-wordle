@@ -9,8 +9,10 @@ class MultiWordle {
         this.objSize = 0;
         this.player = {}
         this.players = [];
+        this.counter = 20;
         this.response = {}
         this.messages = [];
+        this.intervalId = 0
         this.isAnimate = false;
         this.game = document.getElementById("game")
         this.chat = document.getElementById("chat")
@@ -23,6 +25,7 @@ class MultiWordle {
         this.wordleToken = localStorage.getItem("wordle-token")
         this.alphabet = document.getElementById("alphabet")
         this.initForm = document.getElementById("init-form")
+        this.countdown = document.getElementById("countdown")
         this.connected = document.getElementById("connected")
         this.wordleBox = document.getElementById("wordle-box")
         this.unconnected = document.getElementById("unconnected")
@@ -48,6 +51,7 @@ class MultiWordle {
                     this.init.limit = parseInt(this.initForm.querySelector('#set-count').value)
                     this.init.length = parseInt(this.initForm.querySelector('#wordle-length').value)
                     this.init.trial = parseInt(this.initForm.querySelector('#wordle-trial').value)
+                    this.init.timeout = parseInt(this.initForm.querySelector('#timeout').value)
                     this.send("login")
                 })
             }
@@ -87,6 +91,14 @@ class MultiWordle {
                 case "reset":
                     this.initWordle()
                     break;
+                case "timeout":
+                    this.handleError(this.response.message)
+                    this.intervalId = setInterval(this.countDown, 1000)
+                    break;
+                case "start":
+                    this.handleChat()
+                    this.intervalId = setInterval(this.countDown, 1000)
+                    break;
                 case "error":
                     this.handleError()
                     break
@@ -113,6 +125,7 @@ class MultiWordle {
 
     handleInit = () => {
         this.player = this.response.player
+        this.counter = this.room.timeout
         localStorage.setItem("wordle-token", this.player.token)
     }
 
@@ -154,6 +167,7 @@ class MultiWordle {
         this.handleChat()
         this.changeScore()
         this.initWordle()
+        this.intervalId = setInterval(this.countDown, 1000)
     }
 
     handleTotal = () => {
@@ -280,6 +294,8 @@ class MultiWordle {
                     }
                     if (this.room.len === command[1].length) {
                         this.send("wordle", command[1])
+                        clearInterval(this.intervalId)
+                        this.countdown.style.display = "none"
                     } else {
                         this.handleError(`The number of letters in this word "${command[1]}" does not match.`)
                     }
@@ -406,6 +422,18 @@ class MultiWordle {
     close = () => {
         this.connected.style.display = "none"
         this.unconnected.style.display = "block"
+    }
+
+    countDown = ()=> {
+        this.countdown.innerHTML = this.counter
+        this.countdown.style.display = "block"
+        if (this.counter === 0) {
+            clearInterval(this.intervalId)
+            this.countdown.style.display = "none"
+            this.send("timeout")
+            this.counter = this.room.timeout
+        }
+        this.counter--;
     }
 }
 

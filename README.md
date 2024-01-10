@@ -19,7 +19,7 @@ There is only a two-player version with websocket and a scoring system. Each pla
 - [ ] if there is no letter in the word, no penalty for the first use but -1 point for the second use.  
 - [ ] If a correctly placed letter is not used in the next guess, a penalty of -2 points is awarded.  
 - [x] If a word is used that is not in the game language, -2 points penalty. The word list is embedded in the project.  
-- [x] If the player whose turn it doesn't answer within 10 seconds, it passes to the next player. -5 points penalty for repetition.
+- [x] If the player whose turn it doesn't answer within the specified time, he/she is penalized -5 points and the turn passes to the next player.
 
 ## Getting Started
 

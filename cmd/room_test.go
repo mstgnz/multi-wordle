@@ -351,3 +351,46 @@ func TestRoom_ResetMatch(t *testing.T) {
 		})
 	}
 }
+
+func TestRoom_FindGuessing(t *testing.T) {
+	type fields struct {
+		Name       string
+		Lang       string
+		Limit      int
+		Length     int
+		Start      bool
+		Trial      int
+		Messages   []string
+		Wordle     *Wordle
+		Matches    []*Wordle
+		Players    map[*websocket.Conn]*Player
+		PlayerTurn *websocket.Conn
+	}
+	tests := []struct {
+		fields fields
+		want   *Player
+	}{
+		// TODO: Add test cases.
+		{},
+	}
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			r := &Room{
+				Name:       tt.fields.Name,
+				Lang:       tt.fields.Lang,
+				Limit:      tt.fields.Limit,
+				Length:     tt.fields.Length,
+				Start:      tt.fields.Start,
+				Trial:      tt.fields.Trial,
+				Messages:   tt.fields.Messages,
+				Wordle:     tt.fields.Wordle,
+				Matches:    tt.fields.Matches,
+				Players:    tt.fields.Players,
+				PlayerTurn: tt.fields.PlayerTurn,
+			}
+			if got := r.FindGuessing(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FindGuessing() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

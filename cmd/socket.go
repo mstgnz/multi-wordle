@@ -205,7 +205,11 @@ func (s *Socket) timeoutHandle(conn *websocket.Conn) {
 func (s *Socket) startHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
-		message := fmt.Sprintf("The game is started by %s. It's %s's turn to move.", player.Name, "sd")
+		nextPlayer := room.FindGuessing()
+		if nextPlayer == nil {
+			nextPlayer = player
+		}
+		message := fmt.Sprintf("The game is started by %s. It's %s's turn to move.", player.Name, nextPlayer.Name)
 		room.Start = true
 		room.AddMessage(message)
 		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})

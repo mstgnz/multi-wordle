@@ -192,8 +192,8 @@ func GenerateToken() string {
 // InitRoom When the user first enters the page, they are greeted with a form that asks for the language of the game,
 // number of sets, word length and number of attempts. This information can be entered or start with default values.
 // if there is a value, it is set.
-func InitRoom(request Request) (string, int, int, int) {
-	var lang, limit, length, trial = "en", 3, 5, 5
+func InitRoom(request Request) (string, int, int, int, int) {
+	var lang, limit, length, trial, timeout = "en", 3, 5, 5, 20
 	if request.Init.Lang == "tr" {
 		lang = "tr"
 	}
@@ -206,7 +206,10 @@ func InitRoom(request Request) (string, int, int, int) {
 	if request.Init.Trial >= 1 && request.Init.Trial <= 9 {
 		trial = request.Init.Trial
 	}
-	return lang, limit, length, trial
+	if request.Init.Timeout >= 10 && request.Init.Timeout <= 50 {
+		timeout = request.Init.Timeout
+	}
+	return lang, limit, length, trial, timeout
 }
 
 // FindTokenPlayerAndRoom when the user refreshes the page, the user and the room belonging to that user

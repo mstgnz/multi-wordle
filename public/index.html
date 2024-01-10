@@ -21,6 +21,8 @@
         <input type="number" min="4" max="9" id="wordle-length" placeholder="wordle length, default: 5" />
         <label for="wordle-trial">Wordle Trial</label>
         <input type="number" min="3" max="9" id="wordle-trial" placeholder="wordle trial, default: 5" />
+        <label for="timeout">Timeout</label>
+        <input type="number" min="10" max="50" id="timeout" placeholder="playing time, default: 20 second" />
         <button>Start Game</button>
     </form>
     <div id="connected">
@@ -56,6 +58,7 @@
                 <td>Change  Background with Url</td>
             </tr>
         </table>
+        <div id="countdown"></div>
         <div id="wordle">
             <div id="wordle-box"></div>
             <div id="alphabet"></div>
