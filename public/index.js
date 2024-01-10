@@ -287,14 +287,14 @@ class MultiWordle {
             }
         }
         if (command[0] === ":start") {
+            this.handleError("The game will start in 5 seconds. You will have 10 seconds to guess whose turn it is to move.")
             setTimeout(function () {
-                this.handleError("The game will start in 5 seconds. You will have 10 seconds to guess whose turn it is to move.")
                 this.send("start")
             }.bind(this),5000)
         }
         if (command[0] === ":reset") {
+            this.handleError("The game will reset in 5 seconds. To start the game you must use the ':start' command.")
             setTimeout(function () {
-                this.handleError("The game will reset in 5 seconds. To start the game you must use the ':start' command.")
                 this.send("start")
             }.bind(this),5000)
         }
