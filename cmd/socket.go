@@ -135,7 +135,6 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 			s.emit(conn, Response{Type: "error", Message: "It's not your turn"})
 			return
 		}
-		room.NextGuessing(conn)
 		message := fmt.Sprintf("player named %s made a prediction.", player.Name)
 		if room.Length == len(request.Message) {
 			wordle := strings.ToUpper(request.Message)
