@@ -16,7 +16,6 @@ class MultiWordle {
         this.isAnimate = false;
         this.game = document.getElementById("game")
         this.chat = document.getElementById("chat")
-        this.form = document.getElementById("form")
         this.title = document.getElementById("title")
         this.total = document.getElementById("total")
         this.input = document.getElementById("input")
@@ -24,6 +23,7 @@ class MultiWordle {
         this.wordle = document.getElementById("wordle")
         this.wordleToken = localStorage.getItem("wordle-token")
         this.alphabet = document.getElementById("alphabet")
+        this.chatForm = document.getElementById("chat-form")
         this.initForm = document.getElementById("init-form")
         this.countdown = document.getElementById("countdown")
         this.connected = document.getElementById("connected")
@@ -31,7 +31,7 @@ class MultiWordle {
         this.unconnected = document.getElementById("unconnected")
         this.game.addEventListener("click", this.onClickPlayer)
         this.input.addEventListener("keypress", this.onMessage)
-        this.form.addEventListener("submit", (event) => {
+        this.chatForm.addEventListener("submit", (event) => {
             event.preventDefault()
         })
         this.socket = new WebSocket("ws://localhost:3000/ws")
@@ -355,11 +355,15 @@ class MultiWordle {
     }
 
     addMessageToChat = (message) => {
-        this.chat.innerHTML += `<div class="item">
-            <div class="content">
-                <span>${message}</span>
-            </div>
-        </div>`;
+        const item = document.createElement('div')
+        item.className = "item"
+        const content = document.createElement('div')
+        content.className = "content"
+        const span = document.createElement('span')
+        span.textContent = message
+        content.appendChild(span)
+        item.appendChild(content)
+        this.chat.insertBefore(item, this.chat.firstChild)
     }
 
     // wordle layout initialization

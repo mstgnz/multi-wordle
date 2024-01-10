@@ -8,24 +8,11 @@
 </head>
 <body>
 
+    <!-- background -->
     <div id="game"></div>
-    <form id="init-form">
-        <label for="room-lang">Wordle Language</label>
-        <select id="room-lang">
-            <option value="en" selected>English</option>
-            <option value="tr">Turkish</option>
-        </select>
-        <label for="set-count">Set Count</label>
-        <input type="number" min="1" max="9" id="set-count" placeholder="number of sets, default: 3" />
-        <label for="wordle-length">Wordle Length</label>
-        <input type="number" min="4" max="9" id="wordle-length" placeholder="wordle length, default: 5" />
-        <label for="wordle-trial">Wordle Trial</label>
-        <input type="number" min="3" max="9" id="wordle-trial" placeholder="wordle trial, default: 5" />
-        <label for="timeout">Timeout</label>
-        <input type="number" min="10" max="50" id="timeout" placeholder="playing time, default: 20 second" />
-        <button>Start Game</button>
-    </form>
-    <div id="connected">
+
+    <!-- left side -->
+    <div id="left">
         <h1 id="title"></h1>
         <h3 id="total"></h3>
         <table id="commands">
@@ -59,20 +46,47 @@
             </tr>
         </table>
         <div id="countdown"></div>
-        <div id="wordle">
-            <div id="wordle-box"></div>
-            <div id="alphabet"></div>
-        </div>
-        <div id="chat"></div>
-        <form id="form">
-            <label for="input"></label>
-            <input type="text" maxlength="100" minlength="1" id="input" placeholder="Send Message" autofocus="autofocus" />
-        </form>
     </div>
 
-    <h1 id="unconnected">Websocket Not Connected</h1>
+    <!-- middle side -->
+    <div id="middle">
+        <!-- start information -->
+        <form id="init-form">
+            <label for="room-lang">Wordle Language</label>
+            <select id="room-lang">
+                <option value="en" selected>English</option>
+                <option value="tr">Turkish</option>
+            </select>
+            <label for="set-count">Set Count</label>
+            <input type="number" min="1" max="9" id="set-count" placeholder="number of sets, default: 3" />
+            <label for="wordle-length">Wordle Length</label>
+            <input type="number" min="4" max="9" id="wordle-length" placeholder="wordle length, default: 5" />
+            <label for="wordle-trial">Wordle Trial</label>
+            <input type="number" min="3" max="9" id="wordle-trial" placeholder="wordle trial, default: 5" />
+            <label for="timeout">Timeout</label>
+            <input type="number" min="10" max="50" id="timeout" placeholder="playing time, default: 20 second" />
+            <button>Start Game</button>
+        </form>
+        <!-- starting wordle -->
+        <div id="connected">
+            <div id="wordle">
+                <div id="wordle-box"></div>
+                <div id="alphabet"></div>
+            </div>
+            <form id="chat-form">
+                <label for="input"></label>
+                <input type="text" maxlength="100" minlength="1" id="input" placeholder="Send Message" autofocus="autofocus" />
+            </form>
+        </div>
+        <h1 id="unconnected">Websocket Not Connected</h1>
+    </div>
 
-    <div id="error">Error: </div>
+    <!-- right side -->
+    <div id="right">
+        <div id="error">Error: </div>
+        <div id="chat"></div>
+    </div>
+
     <script src="index.js"></script>
 
 </body>
