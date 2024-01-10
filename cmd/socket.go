@@ -120,9 +120,9 @@ func (s *Socket) nameHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s changed its name to %s", player.Name, request.Message)
-		player.SetName(request.Message)
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
+		s.broadcast(Response{Type: request.Type, Message: request.Message, Room: room, Player: player})
+		player.SetName(request.Message)
 	}
 }
 

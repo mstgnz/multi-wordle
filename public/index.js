@@ -326,6 +326,7 @@ class MultiWordle {
     changeName = (player, name) => {
         const element = document.getElementById(player.name)
         if (element) {
+            element.id = name
             const nameElement = element.querySelector('.name')
             nameElement.innerHTML = name
         }
