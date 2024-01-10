@@ -26,7 +26,7 @@ func (r *Rooms) FindRoomWithWs(conn *websocket.Conn) *Room {
 // RemoveRoom delete the room if there are no players in the room
 func (r *Rooms) RemoveRoom(room *Room) {
 	for i, rm := range *r {
-		if rm == room {
+		if rm == room && len(rm.Players) == 0 {
 			*r = append((*r)[:i], (*r)[i+1:]...)
 			return
 		}

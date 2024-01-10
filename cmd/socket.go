@@ -176,7 +176,10 @@ func (s *Socket) disconnect(conn *websocket.Conn) {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s disconnected", player.Name)
 		HandleLog(message, nil)
-		s.broadcast(Response{Type: "disconnect", Message: message, Room: room, Player: player})
+		room.RemovePlayer(conn)
+		if len(room.Players) > 0 {
+			s.broadcast(Response{Type: "disconnect", Message: message, Room: room, Player: player, Players: room.GetPlayers()})
+		}
 		PLAYERS.RemovePlayerWithWs(conn)
 		ROOMS.RemoveRoom(room)
 		_ = conn.Close()

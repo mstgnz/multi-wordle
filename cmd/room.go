@@ -134,3 +134,12 @@ func (r *Room) CheckWord(word string, player *Player) {
 		Player:   player,
 	})
 }
+
+// RemovePlayer if disconnect
+func (r *Room) RemovePlayer(conn *websocket.Conn) {
+	for ws := range r.Players {
+		if ws == conn {
+			delete(r.Players, conn)
+		}
+	}
+}
