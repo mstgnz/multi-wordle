@@ -110,7 +110,6 @@ class MultiWordle {
     handleInit = () => {
         this.player = this.response.player
         localStorage.setItem("wordle-token", this.player.token)
-        this.handleLogin()
     }
 
     handleLogin = () => {
@@ -301,16 +300,18 @@ class MultiWordle {
     }
 
     addPlayerToGameArea = () => {
-        this.game.innerHTML = ""
-        this.players.forEach(player => {
-            this.game.innerHTML += `<div class="circle" id="${player.name}" style="left:${player.position.x}px;top:${player.position.y}px; background-color: ${player.color}">
+        if(this.players && this.players.length){
+            this.game.innerHTML = ""
+            this.players.forEach(player => {
+                this.game.innerHTML += `<div class="circle" id="${player.name}" style="left:${player.position.x}px;top:${player.position.y}px; background-color: ${player.color}">
             <div class="relative">
                 <span class="name">${player.name}</span>
                 <span class="score">S: ${player.score}</span>
                 <div class="message"></div>
             </div>
         </div>`
-        })
+            })
+        }
     }
 
     addMessageToChat = (message) => {
