@@ -175,7 +175,7 @@ func (s *Socket) chatHandle(conn *websocket.Conn) {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s: %s", player.Name, request.Message)
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
+		s.broadcast(Response{Type: request.Type, Message: request.Message, Room: room, Player: player})
 	}
 }
 

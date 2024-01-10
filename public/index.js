@@ -147,8 +147,10 @@ class MultiWordle {
 
 
     handleChat = () => {
+        const player = this.players.find((player) => player.name === this.response.player.name)
         this.messages = this.response.room.messages
         this.addMessageToChat(this.messages[this.messages.length - 1])
+        this.showBubble(player.name, this.response.message)
         this.scrollTop()
     }
 
