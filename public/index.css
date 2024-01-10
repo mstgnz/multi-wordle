@@ -258,3 +258,13 @@ span.change a {
     border-radius: 5px;
     background-color: cadetblue;
 }
+#commands{
+    color: #333333;
+    background-color: #dddddd6e;
+}
+#commands td{
+    padding: 3px;
+}
+#commands th, #commands td {
+    border: solid 1px #ddd;
+}

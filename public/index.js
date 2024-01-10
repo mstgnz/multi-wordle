@@ -286,6 +286,18 @@ class MultiWordle {
                     break
             }
         }
+        if (command[0] === ":start") {
+            setTimeout(function () {
+                this.handleError("The game will start in 5 seconds. You will have 10 seconds to guess whose turn it is to move.")
+                this.send("start")
+            }.bind(this),5000)
+        }
+        if (command[0] === ":reset") {
+            setTimeout(function () {
+                this.handleError("The game will reset in 5 seconds. To start the game you must use the ':start' command.")
+                this.send("start")
+            }.bind(this),5000)
+        }
         if (command[0] === ":change-bg") {
             fetch("https://source.unsplash.com/random/1920x1080").then((response) => {
                 if (response.ok) {

@@ -58,12 +58,14 @@ Type a message in the text box at the bottom and press "Enter" to send a message
 
 #### commands
 
-| command              | description                  |
-|----------------------|------------------------------|
-| :wordle word         | Guess the Wordle             |
-| :change-name newName | Change Nick Name             |
-| :change-bg           | Change Random Background     |
-| :change-bg newUrl    | Change  Background with Url  |
+| command              | description                 |
+|----------------------|-----------------------------|
+| :start               | Start the Wordle Game       |
+| :reset               | Reset the Wordle Game       |
+| :wordle word         | Guess the Wordle            |
+| :change-name newName | Change Nick Name            |
+| :change-bg           | Change Random Background    |
+| :change-bg newUrl    | Change  Background with Url |
 
 ### Contributing
 This project is open-source, and contributions are welcome. Feel free to contribute or provide feedback of any kind.
