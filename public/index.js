@@ -303,7 +303,7 @@ class MultiWordle {
             }
         }
         if (command[0] === ":start") {
-            this.handleError("The game will start in 5 seconds. You will have 10 seconds to guess whose turn it is to move.")
+            this.handleError(`The game will start in 5 seconds. You will have ${this.counter} seconds to guess whose turn it is to move.`)
             setTimeout(function () {
                 this.send("start")
             }.bind(this),5000)
