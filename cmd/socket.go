@@ -141,7 +141,7 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 			// If a word is used that is not in the game language, -2 points penalty. The word list is embedded in the project.
 			contains, err := ContainsWord(room.Length, room.Lang, wordle)
 			if !contains || err != nil {
-				player.MinusScore(-2)
+				player.MinusScore(2)
 				message += fmt.Sprintf(" -2 points for entering a non-existent word.")
 			} else {
 				room.CheckWord(wordle, player)
@@ -193,7 +193,7 @@ func (s *Socket) animateHandle(conn *websocket.Conn) {
 func (s *Socket) timeoutHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
-		player.MinusScore(-5)
+		player.MinusScore(5)
 		room.NextGuessing(conn)
 		message := fmt.Sprintf("Player %s lost his turn for not playing within 10 seconds and was penalized -5 points.", player.Name)
 		room.AddMessage(message)
