@@ -386,6 +386,8 @@ class MultiWordle {
             }
             this.wordleBox.appendChild(wordleRow);
         }
+        // set wordle box width
+        this.wordleBox.style.width = this.room.len * 50 + "px"
         // set alphabet
         const letters = this.chapter(this.room.wordle.alphabet)
         for (let i = 0; i < letters.length; i++) {
