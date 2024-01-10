@@ -131,12 +131,12 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 			contains, err := ContainsWord(room.Length, room.Lang, wordle)
 			if !contains || err != nil {
 				player.Score -= 2
-				message += fmt.Sprintf("-2 points for entering a non-existent word.")
+				message += fmt.Sprintf(" -2 points for entering a non-existent word.")
 			} else {
 				room.CheckWord(wordle, player)
 			}
 		} else {
-			message = "the set word Length does not match."
+			message += " the set word Length does not match."
 		}
 		room.AddMessage(message)
 		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
@@ -149,7 +149,7 @@ func (s *Socket) chatHandle(conn *websocket.Conn) {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s: %s", player.Name, request.Message)
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: "new message", Room: room, Player: player})
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
 	}
 }
 
