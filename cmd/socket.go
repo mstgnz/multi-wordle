@@ -188,14 +188,14 @@ func (s *Socket) animateHandle(conn *websocket.Conn) {
 	}
 }
 
-// timeoutHandle If the player whose turn it doesn't answer within 10 seconds, it passes to the next player.
+// timeoutHandle If the player whose turn it doesn't answer within room.Timeout seconds, it passes to the next player.
 // -5 points penalty for repetition.
 func (s *Socket) timeoutHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
 		player.MinusScore(5)
 		room.NextGuessing(conn)
-		message := fmt.Sprintf("Player %s lost his turn for not playing within 10 seconds and was penalized -5 points.", player.Name)
+		message := fmt.Sprintf("Player %s lost his turn for not playing within %d seconds and was penalized -5 points.", player.Name, room.Timeout)
 		room.AddMessage(message)
 		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
 	}
