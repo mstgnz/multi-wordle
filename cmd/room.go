@@ -154,9 +154,13 @@ func (r *Room) RemovePlayer(conn *websocket.Conn) {
 
 // NextGuessing the next player to guess
 func (r *Room) NextGuessing(conn *websocket.Conn) {
-	for ws := range r.Players {
-		if ws != conn {
-			r.Players[ws].IsGuessing = true
+	if len(r.Players) > 1 {
+		for ws := range r.Players {
+			if ws != conn {
+				r.Players[ws].IsGuessing = true
+			} else {
+				r.Players[ws].IsGuessing = false
+			}
 		}
 	}
 }

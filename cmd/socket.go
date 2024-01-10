@@ -135,7 +135,7 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 			s.emit(conn, Response{Type: "error", Message: "It's not your turn"})
 			return
 		}
-		player.SetIsGuessing(false)
+		room.NextGuessing(conn)
 		message := fmt.Sprintf("player named %s made a prediction.", player.Name)
 		if room.Length == len(request.Message) {
 			wordle := strings.ToUpper(request.Message)
@@ -194,7 +194,6 @@ func (s *Socket) animateHandle(conn *websocket.Conn) {
 func (s *Socket) timeoutHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
-		player.SetIsGuessing(false)
 		player.MinusScore(-5)
 		room.NextGuessing(conn)
 		message := fmt.Sprintf("Player %s lost his turn for not playing within 10 seconds and was penalized -5 points.", player.Name)
