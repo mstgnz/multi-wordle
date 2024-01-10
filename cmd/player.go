@@ -21,7 +21,7 @@ func NewPlayer(conn *websocket.Conn) *Player {
 		Score:    0,
 		Color:    RandomColor(),
 		Token:    GenerateToken(),
-		Position: Position{X: 0, Y: 0},
+		Position: Position{X: 100, Y: 100},
 		Conn:     conn,
 	}
 	return PLAYERS.AddPlayer(player)

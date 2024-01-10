@@ -89,7 +89,9 @@ func (s *Socket) loginHandle(ws *websocket.Conn) {
 		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 		return
 	}
+	// create new player
 	player := NewPlayer(ws)
+	// return new room or exists room
 	room, err := NewRoom(request)
 	if err != nil || room == nil {
 		PLAYERS.RemovePlayerWithWs(ws)
@@ -103,6 +105,7 @@ func (s *Socket) loginHandle(ws *websocket.Conn) {
 	message := fmt.Sprintf("%s: connected", player.Name)
 	room.AddMessage(message)
 	HandleLog(message, nil)
+	s.emit(ws, Response{Type: "init", Message: "Login Success", Room: room, Player: player})
 	s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 }
 
@@ -113,7 +116,7 @@ func (s *Socket) nameHandle(conn *websocket.Conn) {
 		message := fmt.Sprintf("%s changed its name to %s", player.Name, request.Message)
 		player.SetName(request.Message)
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
 	}
 }
 
@@ -136,7 +139,7 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 			message = "the set word Length does not match."
 		}
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
 	}
 }
 
@@ -146,7 +149,7 @@ func (s *Socket) chatHandle(conn *websocket.Conn) {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s: %s", player.Name, request.Message)
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: "new message", Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(Response{Type: request.Type, Message: "new message", Room: room, Player: player})
 	}
 }
 
@@ -155,7 +158,7 @@ func (s *Socket) animateHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
 		player.Position = request.Position
-		s.broadcast(Response{Type: request.Type, Message: "animate", Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(Response{Type: request.Type, Message: "animate", Room: room, Player: player})
 	}
 }
 
@@ -173,7 +176,7 @@ func (s *Socket) disconnect(conn *websocket.Conn) {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s disconnected", player.Name)
 		HandleLog(message, nil)
-		s.broadcast(Response{Type: "disconnect", Message: message, Room: room, Player: player, Players: room.GetPlayers()})
+		s.broadcast(Response{Type: "disconnect", Message: message, Room: room, Player: player})
 		PLAYERS.RemovePlayerWithWs(conn)
 		ROOMS.RemoveRoom(room)
 		_ = conn.Close()

@@ -60,11 +60,11 @@ class MultiWordle {
                 this.room = this.response.room
                 this.title.innerHTML = this.room && this.room.name ? this.room.name.toUpperCase() : ""
             }
-            if(this.response.players){
-                this.players = this.response.players
-            }
             console.log(this.response)
             switch (this.response.type) {
+                case "init":
+                    this.handleInit()
+                    break
                 case "login":
                     this.handleLogin()
                     break
@@ -83,14 +83,14 @@ class MultiWordle {
                 case "total":
                     this.handleTotal()
                     break;
-                case "disconnect":
-                    this.handleDisconnect()
-                    break
                 case "error":
                     this.handleError()
                     break
                 case "fatal":
                     this.handleFatal()
+                    break
+                case "disconnect":
+                    this.handleDisconnect()
                     break
             }
             this.input.focus()
@@ -107,9 +107,14 @@ class MultiWordle {
         }
     }
 
-    handleLogin = () => {
+    handleInit = () => {
         this.player = this.response.player
         localStorage.setItem("wordle-token", this.player.token)
+        this.handleLogin()
+    }
+
+    handleLogin = () => {
+        this.players = this.response.players
         this.initWordle()
         this.addPlayerToGameArea()
         this.handleChat()
@@ -131,19 +136,6 @@ class MultiWordle {
         this.scrollTop()
     }
 
-    handleError = (error) => {
-        this.error.innerHTML = error ? error : this.response.message
-        this.error.style.display = "block"
-        setTimeout(function () {
-            this.error.style.display = "none"
-        }.bind(this), 5000)
-    }
-
-    handleFatal = () => {
-        this.close()
-        this.unconnected.innerHTML = this.response.message
-    }
-
     handleName = () => {
         if (this.response.player.name !== this.player.name) {
             const player = this.players.find((player) => player.name === this.response.player.name)
@@ -163,6 +155,19 @@ class MultiWordle {
 
     handleTotal = () => {
         this.total.innerHTML = this.response.message
+    }
+
+    handleError = (error) => {
+        this.error.innerHTML = error ? error : this.response.message
+        this.error.style.display = "block"
+        setTimeout(function () {
+            this.error.style.display = "none"
+        }.bind(this), 5000)
+    }
+
+    handleFatal = () => {
+        this.close()
+        this.unconnected.innerHTML = this.response.message
     }
 
     handleDisconnect = () => {
