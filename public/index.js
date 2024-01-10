@@ -16,7 +16,9 @@ class MultiWordle {
         this.isAnimate = false;
         this.game = document.getElementById("game")
         this.chat = document.getElementById("chat")
+        this.left = document.getElementById("left")
         this.title = document.getElementById("title")
+        this.right = document.getElementById("right")
         this.total = document.getElementById("total")
         this.input = document.getElementById("input")
         this.error = document.getElementById("error")
@@ -431,6 +433,8 @@ class MultiWordle {
     close = () => {
         this.connected.style.display = "none"
         this.unconnected.style.display = "block"
+        this.left.style.display = "none"
+        this.right.style.display = "none"
     }
 
     countDown = ()=> {
