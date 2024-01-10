@@ -36,10 +36,11 @@ func TestNewRoom(t *testing.T) {
 
 func TestRoom_AddMessage(t *testing.T) {
 	type fields struct {
-		ID         string
+		Name       string
 		Lang       string
 		Limit      int
 		Length     int
+		Start      bool
 		Trial      int
 		Messages   []string
 		Wordle     *Wordle
@@ -60,10 +61,11 @@ func TestRoom_AddMessage(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			r := &Room{
-				Name:       tt.fields.ID,
+				Name:       tt.fields.Name,
 				Lang:       tt.fields.Lang,
 				Limit:      tt.fields.Limit,
 				Length:     tt.fields.Length,
+				Start:      tt.fields.Start,
 				Trial:      tt.fields.Trial,
 				Messages:   tt.fields.Messages,
 				Wordle:     tt.fields.Wordle,
@@ -78,10 +80,11 @@ func TestRoom_AddMessage(t *testing.T) {
 
 func TestRoom_CheckWord(t *testing.T) {
 	type fields struct {
-		ID         string
+		Name       string
 		Lang       string
 		Limit      int
 		Length     int
+		Start      bool
 		Trial      int
 		Messages   []string
 		Wordle     *Wordle
@@ -103,10 +106,11 @@ func TestRoom_CheckWord(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			r := &Room{
-				Name:       tt.fields.ID,
+				Name:       tt.fields.Name,
 				Lang:       tt.fields.Lang,
 				Limit:      tt.fields.Limit,
 				Length:     tt.fields.Length,
+				Start:      tt.fields.Start,
 				Trial:      tt.fields.Trial,
 				Messages:   tt.fields.Messages,
 				Wordle:     tt.fields.Wordle,
@@ -121,10 +125,11 @@ func TestRoom_CheckWord(t *testing.T) {
 
 func TestRoom_GetPlayers(t *testing.T) {
 	type fields struct {
-		ID         string
+		Name       string
 		Lang       string
 		Limit      int
 		Length     int
+		Start      bool
 		Trial      int
 		Messages   []string
 		Wordle     *Wordle
@@ -142,10 +147,11 @@ func TestRoom_GetPlayers(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			r := &Room{
-				Name:       tt.fields.ID,
+				Name:       tt.fields.Name,
 				Lang:       tt.fields.Lang,
 				Limit:      tt.fields.Limit,
 				Length:     tt.fields.Length,
+				Start:      tt.fields.Start,
 				Trial:      tt.fields.Trial,
 				Messages:   tt.fields.Messages,
 				Wordle:     tt.fields.Wordle,
@@ -160,12 +166,57 @@ func TestRoom_GetPlayers(t *testing.T) {
 	}
 }
 
-func TestRoom_Reset(t *testing.T) {
+func TestRoom_NextGuessing(t *testing.T) {
 	type fields struct {
-		ID         string
+		Name       string
 		Lang       string
 		Limit      int
 		Length     int
+		Start      bool
+		Trial      int
+		Messages   []string
+		Wordle     *Wordle
+		Matches    []*Wordle
+		Players    map[*websocket.Conn]*Player
+		PlayerTurn *websocket.Conn
+	}
+	type args struct {
+		conn *websocket.Conn
+	}
+	tests := []struct {
+		fields fields
+		args   args
+	}{
+		// TODO: Add test cases.
+		{},
+	}
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			r := &Room{
+				Name:       tt.fields.Name,
+				Lang:       tt.fields.Lang,
+				Limit:      tt.fields.Limit,
+				Length:     tt.fields.Length,
+				Start:      tt.fields.Start,
+				Trial:      tt.fields.Trial,
+				Messages:   tt.fields.Messages,
+				Wordle:     tt.fields.Wordle,
+				Matches:    tt.fields.Matches,
+				Players:    tt.fields.Players,
+				PlayerTurn: tt.fields.PlayerTurn,
+			}
+			r.NextGuessing(tt.args.conn)
+		})
+	}
+}
+
+func TestRoom_NextMatch(t *testing.T) {
+	type fields struct {
+		Name       string
+		Lang       string
+		Limit      int
+		Length     int
+		Start      bool
 		Trial      int
 		Messages   []string
 		Wordle     *Wordle
@@ -184,10 +235,11 @@ func TestRoom_Reset(t *testing.T) {
 	for i, tt := range tests {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			r := &Room{
-				Name:       tt.fields.ID,
+				Name:       tt.fields.Name,
 				Lang:       tt.fields.Lang,
 				Limit:      tt.fields.Limit,
 				Length:     tt.fields.Length,
+				Start:      tt.fields.Start,
 				Trial:      tt.fields.Trial,
 				Messages:   tt.fields.Messages,
 				Wordle:     tt.fields.Wordle,
@@ -195,13 +247,106 @@ func TestRoom_Reset(t *testing.T) {
 				Players:    tt.fields.Players,
 				PlayerTurn: tt.fields.PlayerTurn,
 			}
-			got, err := r.Reset()
+			got, err := r.NextMatch()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Reset() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("NextMatch() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Reset() got = %v, want %v", got, tt.want)
+				t.Errorf("NextMatch() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRoom_RemovePlayer(t *testing.T) {
+	type fields struct {
+		Name       string
+		Lang       string
+		Limit      int
+		Length     int
+		Start      bool
+		Trial      int
+		Messages   []string
+		Wordle     *Wordle
+		Matches    []*Wordle
+		Players    map[*websocket.Conn]*Player
+		PlayerTurn *websocket.Conn
+	}
+	type args struct {
+		conn *websocket.Conn
+	}
+	tests := []struct {
+		fields fields
+		args   args
+	}{
+		// TODO: Add test cases.
+		{},
+	}
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			r := &Room{
+				Name:       tt.fields.Name,
+				Lang:       tt.fields.Lang,
+				Limit:      tt.fields.Limit,
+				Length:     tt.fields.Length,
+				Start:      tt.fields.Start,
+				Trial:      tt.fields.Trial,
+				Messages:   tt.fields.Messages,
+				Wordle:     tt.fields.Wordle,
+				Matches:    tt.fields.Matches,
+				Players:    tt.fields.Players,
+				PlayerTurn: tt.fields.PlayerTurn,
+			}
+			r.RemovePlayer(tt.args.conn)
+		})
+	}
+}
+
+func TestRoom_ResetMatch(t *testing.T) {
+	type fields struct {
+		Name       string
+		Lang       string
+		Limit      int
+		Length     int
+		Start      bool
+		Trial      int
+		Messages   []string
+		Wordle     *Wordle
+		Matches    []*Wordle
+		Players    map[*websocket.Conn]*Player
+		PlayerTurn *websocket.Conn
+	}
+	tests := []struct {
+		fields  fields
+		want    *Room
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{},
+	}
+	for i, tt := range tests {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
+			r := &Room{
+				Name:       tt.fields.Name,
+				Lang:       tt.fields.Lang,
+				Limit:      tt.fields.Limit,
+				Length:     tt.fields.Length,
+				Start:      tt.fields.Start,
+				Trial:      tt.fields.Trial,
+				Messages:   tt.fields.Messages,
+				Wordle:     tt.fields.Wordle,
+				Matches:    tt.fields.Matches,
+				Players:    tt.fields.Players,
+				PlayerTurn: tt.fields.PlayerTurn,
+			}
+			got, err := r.ResetMatch()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ResetMatch() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ResetMatch() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

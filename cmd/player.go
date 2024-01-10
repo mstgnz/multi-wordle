@@ -31,13 +31,28 @@ func (p *Player) SetName(name string) {
 	p.Name = name
 }
 
+func (p *Player) SetColor(color string) {
+	p.Color = color
+}
+
 func (p *Player) SetScore(score int) {
 	p.Score = score
 }
 
-// SetIsGuessing is "true" if it is the guesser's turn.
+func (p *Player) PlusScore(score int) {
+	p.Score += score
+}
+
+func (p *Player) MinusScore(score int) {
+	p.Score -= score
+}
+
 func (p *Player) SetIsGuessing(isGuessing bool) {
 	p.IsGuessing = isGuessing
+}
+
+func (p *Player) SetPosition(position Position) {
+	p.Position = position
 }
 
 type Position struct {

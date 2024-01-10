@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 
@@ -13,15 +14,17 @@ import (
 type Room struct {
 	// Room Name
 	Name string `json:"name"`
-	// Limit how many matches will be played
+	// Lang word language to be predicted
 	Lang string `json:"lang"`
-	// Messages intra-room correspondence
+	// Limit how many matches will be played
 	Limit int `json:"limit"`
-	// Word Length
+	// Length wordle
 	Length int `json:"len"`
+	// Start has the game started
+	Start bool `json:"start"`
 	// Trial Number of word prediction trials
 	Trial int `json:"trial"`
-	// Lang word language to be predicted
+	// Messages intra-room correspondence
 	Messages []string `json:"messages"`
 	// Wordle It provides the word to be guessed and the necessary checks and coloring for each guess.
 	Wordle *Wordle `json:"wordle"`
@@ -42,7 +45,7 @@ func NewRoom(request Request) (*Room, error) {
 	// initialized room settings
 	lang, limit, length, trial := InitRoom(request)
 	for _, room := range ROOMS {
-		if room.Lang == lang && room.Limit == limit && room.Length == length && room.Trial == trial && len(room.Players) < 2 {
+		if !room.Start && room.Lang == lang && room.Limit == limit && room.Length == length && room.Trial == trial && len(room.Players) < 2 {
 			return room, nil
 		}
 	}
@@ -84,18 +87,23 @@ func (r *Room) GetPlayers() []*Player {
 	return players
 }
 
-// Reset New match
-func (r *Room) Reset() (*Room, error) {
+// NextMatch New match
+func (r *Room) NextMatch() (*Room, error) {
+	// check limit
+	if r.Limit == len(r.Matches) {
+		return r, errors.New("all matches have been completed")
+	}
+	// switch next match
 	getWord, err := GetWords(r.Lang, r.Length)
 	if err != nil {
 		return nil, err
 	}
-	r.Matches = append(r.Matches, r.Wordle)
 	r.Wordle = &Wordle{
 		Word:      getWord,
 		Forecasts: make([]Forecasts, 0),
 		Alphabet:  SetAlphabet(r.Lang),
 	}
+	r.Matches = append(r.Matches, r.Wordle)
 	return r, nil
 }
 
@@ -142,4 +150,29 @@ func (r *Room) RemovePlayer(conn *websocket.Conn) {
 			delete(r.Players, conn)
 		}
 	}
+}
+
+// NextGuessing the next player to guess
+func (r *Room) NextGuessing(conn *websocket.Conn) {
+	for ws := range r.Players {
+		if ws != conn {
+			r.Players[ws].IsGuessing = true
+		}
+	}
+}
+
+// ResetMatch reset match
+func (r *Room) ResetMatch() (*Room, error) {
+	getWord, err := GetWords(r.Lang, r.Length)
+	if err != nil {
+		return nil, err
+	}
+	r.Matches = make([]*Wordle, 0)
+	r.Wordle = &Wordle{
+		Word:      getWord,
+		Forecasts: make([]Forecasts, 0),
+		Alphabet:  SetAlphabet(r.Lang),
+	}
+	r.Matches = append(r.Matches, r.Wordle)
+	return r, nil
 }

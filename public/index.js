@@ -83,6 +83,10 @@ class MultiWordle {
                 case "total":
                     this.handleTotal()
                     break;
+                case "next":
+                case "reset":
+                    this.initWordle()
+                    break;
                 case "error":
                     this.handleError()
                     break
@@ -266,6 +270,14 @@ class MultiWordle {
                     document.body.style.backgroundImage = `url(${newBg})`
                     break
                 case ":wordle":
+                    if (!this.room.start){
+                        this.handleError(`Not yet game started. You must first start the game.`)
+                        return
+                    }
+                    if (!this.player.is_guessing){
+                        this.handleError(`It's not your turn.`)
+                        return
+                    }
                     if (this.room.len === command[1].length) {
                         this.send("wordle", command[1])
                     } else {

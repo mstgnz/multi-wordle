@@ -49,6 +49,12 @@ func (s *Socket) Handler(ws *websocket.Conn) {
 			s.chatHandle(ws)
 		case "animate":
 			s.animateHandle(ws)
+		case "timeout":
+			s.timeoutHandle(ws)
+		case "start":
+			s.startHandle(ws)
+		case "reset":
+			s.resetHandle(ws)
 		default:
 			HandleLog("invalid type: "+request.Type, nil)
 			s.emit(ws, Response{Type: "error", Message: "invalid type: " + request.Type})
@@ -124,21 +130,42 @@ func (s *Socket) nameHandle(conn *websocket.Conn) {
 func (s *Socket) wordleHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
+		// check who's next
+		if !player.IsGuessing {
+			s.emit(conn, Response{Type: "error", Message: "It's not your turn"})
+			return
+		}
+		player.SetIsGuessing(false)
 		message := fmt.Sprintf("player named %s made a prediction.", player.Name)
 		if room.Length == len(request.Message) {
 			wordle := strings.ToUpper(request.Message)
 			// If a word is used that is not in the game language, -2 points penalty. The word list is embedded in the project.
 			contains, err := ContainsWord(room.Length, room.Lang, wordle)
 			if !contains || err != nil {
-				player.Score -= 2
+				player.MinusScore(-2)
 				message += fmt.Sprintf(" -2 points for entering a non-existent word.")
 			} else {
 				room.CheckWord(wordle, player)
+				if room.Wordle.Word == wordle {
+					// +10 points for knowing the word.
+					player.PlusScore(10)
+					room, err = room.NextMatch()
+					if err != nil {
+						room.AddMessage(err.Error())
+						s.broadcast(Response{Type: "error", Message: err.Error(), Room: room, Player: player})
+					} else {
+						message = fmt.Sprintf("Player named %s has guessed the word and moves on to the next match.", player.Name)
+						room.AddMessage(message)
+						s.broadcast(Response{Type: "next", Message: message, Room: room, Player: player})
+					}
+					return
+				}
 			}
 		} else {
 			message += " the set word Length does not match."
 		}
 		room.AddMessage(message)
+		room.NextGuessing(conn)
 		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
 	}
 }
@@ -159,6 +186,45 @@ func (s *Socket) animateHandle(conn *websocket.Conn) {
 		player := room.Players[conn]
 		player.Position = request.Position
 		s.broadcast(Response{Type: request.Type, Message: "animate", Room: room, Player: player})
+	}
+}
+
+// timeoutHandle If the player whose turn it doesn't answer within 10 seconds, it passes to the next player.
+// -5 points penalty for repetition.
+func (s *Socket) timeoutHandle(conn *websocket.Conn) {
+	if room := ROOMS.FindRoomWithWs(conn); room != nil {
+		player := room.Players[conn]
+		player.SetIsGuessing(false)
+		player.MinusScore(-5)
+		room.NextGuessing(conn)
+		message := fmt.Sprintf("Player %s lost his turn for not playing within 10 seconds and was penalized -5 points.", player.Name)
+		room.AddMessage(message)
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
+	}
+}
+
+// startHandle start the match
+func (s *Socket) startHandle(conn *websocket.Conn) {
+	if room := ROOMS.FindRoomWithWs(conn); room != nil {
+		player := room.Players[conn]
+		message := fmt.Sprintf("The game is started by %s. It's %s's turn to move.", player.Name, "sd")
+		room.Start = true
+		room.AddMessage(message)
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
+	}
+}
+
+// resetHandle reset the match
+func (s *Socket) resetHandle(conn *websocket.Conn) {
+	if room := ROOMS.FindRoomWithWs(conn); room != nil {
+		message := fmt.Sprintf("The game has been reset.")
+		room.Start = false
+		room, err := room.ResetMatch()
+		if err != nil {
+			message = err.Error()
+		}
+		room.AddMessage(message)
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room})
 	}
 }
 
