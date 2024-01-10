@@ -6,7 +6,7 @@ It's the same Wordle game, the way of playing doesn't change.
 - Each guess must be a correct 5-letter word. Press enter to submit.
 - After each guess the colors of the boxes will change according to the closeness of your guess.
 
-There is only a two-player version with websocket and a scoring system. Each player takes turns guessing. The scoring system determines the winner.
+There is a two-player version with websocket and a scoring system. Each player takes turns guessing. The scoring system determines the winner.
 
 ### Features
 - [x] There will be rooms for two people.
