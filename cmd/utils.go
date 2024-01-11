@@ -12,6 +12,7 @@ import (
 	"reflect"
 	"runtime"
 	"time"
+	"unicode/utf8"
 )
 
 func HandleLog(message string, err error) {
@@ -126,7 +127,7 @@ func GetWordFromFile(file *os.File, lineNo int) (string, error) {
 
 // ExistsLetter check if there are letters in the word.
 func ExistsLetter(word string, letter byte) bool {
-	for i := 0; i < len(word); i++ {
+	for i := 0; i < utf8.RuneCountInString(word); i++ {
 		if word[i] == letter {
 			return true
 		}

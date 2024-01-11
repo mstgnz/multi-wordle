@@ -66,6 +66,10 @@ class MultiWordle {
                 this.room = this.response.room
                 this.title.innerHTML = this.room && this.room.name ? this.room.name.toUpperCase() : ""
             }
+            if(this.response.players){
+                this.players = this.response.players
+            }
+            this.setPlayer()
             console.log(this.response)
             switch (this.response.type) {
                 case "init":
@@ -132,12 +136,14 @@ class MultiWordle {
     }
 
     handleLogin = () => {
-        this.players = this.response.players
         this.initWordle()
         this.addPlayerToGameArea()
         this.handleChat()
         this.initForm.style.display = "none"
         this.connected.style.display = "block"
+        this.left.style.display = "block"
+        this.right.style.display = "block"
+        this.game.style.display = "block"
     }
 
     handleAnimate = () => {
@@ -299,6 +305,7 @@ class MultiWordle {
                     if (this.room.len === command[1].length) {
                         this.send("wordle", command[1])
                         clearInterval(this.intervalId)
+                        this.counter = this.room.timeout
                         this.countdown.style.display = "none"
                     } else {
                         this.handleError(`The number of letters in this word "${command[1]}" does not match.`)
@@ -438,7 +445,11 @@ class MultiWordle {
     }
 
     countDown = ()=> {
-        this.countdown.innerHTML = this.counter
+        let player = this.player
+        if(!this.player.is_guessing){
+            player = this.players.find((player) => player.name !== this.player.name)
+        }
+        this.countdown.innerHTML = player ? player.name + ": " + this.counter : this.counter
         this.countdown.style.display = "block"
         if (this.counter === 0) {
             clearInterval(this.intervalId)
@@ -447,6 +458,12 @@ class MultiWordle {
             this.counter = this.room.timeout
         }
         this.counter--;
+    }
+
+    setPlayer = () => {
+        if(this.response.player && this.player.name === this.response.player.name){
+            this.player = this.response.player
+        }
     }
 }
 

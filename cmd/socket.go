@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"unicode/utf8"
 
 	"golang.org/x/net/websocket"
 )
@@ -121,7 +122,7 @@ func (s *Socket) nameHandle(conn *websocket.Conn) {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s changed its name to %s", player.Name, request.Message)
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: request.Message, Room: room, Player: player})
+		s.broadcast(Response{Type: request.Type, Message: request.Message, Room: room, Player: player, Players: room.GetPlayers()})
 		player.SetName(request.Message)
 	}
 }
@@ -136,7 +137,7 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 			return
 		}
 		message := fmt.Sprintf("player named %s made a prediction.", player.Name)
-		if room.Length == len(request.Message) {
+		if room.Length == utf8.RuneCountInString(request.Message) {
 			wordle := strings.ToUpper(request.Message)
 			// If a word is used that is not in the game language, -2 points penalty. The word list is embedded in the project.
 			contains, err := ContainsWord(room.Length, room.Lang, wordle)
@@ -151,11 +152,11 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 					room, err = room.NextMatch()
 					if err != nil {
 						room.AddMessage(err.Error())
-						s.broadcast(Response{Type: "error", Message: err.Error(), Room: room, Player: player})
+						s.broadcast(Response{Type: "error", Message: err.Error(), Room: room, Player: player, Players: room.GetPlayers()})
 					} else {
 						message = fmt.Sprintf("Player named %s has guessed the word and moves on to the next match.", player.Name)
 						room.AddMessage(message)
-						s.broadcast(Response{Type: "next", Message: message, Room: room, Player: player})
+						s.broadcast(Response{Type: "next", Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 					}
 					return
 				}
@@ -168,13 +169,13 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 			room, err := room.NextMatch()
 			if err != nil {
 				room.AddMessage(err.Error())
-				s.broadcast(Response{Type: "error", Message: err.Error(), Room: room, Player: player})
+				s.broadcast(Response{Type: "error", Message: err.Error(), Room: room, Player: player, Players: room.GetPlayers()})
 				return
 			}
 		}
 		room.AddMessage(message)
 		room.NextGuessing(conn)
-		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
 
@@ -184,7 +185,7 @@ func (s *Socket) chatHandle(conn *websocket.Conn) {
 		player := room.Players[conn]
 		message := fmt.Sprintf("%s: %s", player.Name, request.Message)
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: request.Message, Room: room, Player: player})
+		s.broadcast(Response{Type: request.Type, Message: request.Message, Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
 
@@ -193,7 +194,7 @@ func (s *Socket) animateHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
 		player.Position = request.Position
-		s.broadcast(Response{Type: request.Type, Message: "animate", Room: room, Player: player})
+		s.broadcast(Response{Type: request.Type, Message: "animate", Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
 
@@ -206,7 +207,7 @@ func (s *Socket) timeoutHandle(conn *websocket.Conn) {
 		room.NextGuessing(conn)
 		message := fmt.Sprintf("Player %s lost his turn for not playing within %d seconds and was penalized -5 points.", player.Name, room.Timeout)
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
 
@@ -221,7 +222,7 @@ func (s *Socket) startHandle(conn *websocket.Conn) {
 		message := fmt.Sprintf("The game is started by %s. It's %s's turn to move.", player.Name, nextPlayer.Name)
 		room.Start = true
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 	}
 }
 
@@ -235,7 +236,7 @@ func (s *Socket) resetHandle(conn *websocket.Conn) {
 			message = err.Error()
 		}
 		room.AddMessage(message)
-		s.broadcast(Response{Type: request.Type, Message: message, Room: room})
+		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Players: room.GetPlayers()})
 	}
 }
 

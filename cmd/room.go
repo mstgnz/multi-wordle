@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"unicode/utf8"
 
 	"golang.org/x/net/websocket"
 )
@@ -116,7 +117,7 @@ func (r *Room) NextMatch() (*Room, error) {
 func (r *Room) CheckWord(word string, player *Player) {
 	var forecasts []Forecast
 	score := 0
-	for i := 0; i < len(r.Wordle.Word); i++ {
+	for i := 0; i < utf8.RuneCountInString(r.Wordle.Word); i++ {
 		if r.Wordle.Word[i] == word[i] {
 			// If the letter is present and in the correct position, it is green
 			r.Wordle.SetAlphabet(rune(word[i]), "#00FF00")
