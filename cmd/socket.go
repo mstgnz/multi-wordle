@@ -163,6 +163,15 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 		} else {
 			message += " the set word Length does not match."
 		}
+		// check trial
+		if len(room.Wordle.Forecasts) == room.Trial {
+			room, err := room.NextMatch()
+			if err != nil {
+				room.AddMessage(err.Error())
+				s.broadcast(Response{Type: "error", Message: err.Error(), Room: room, Player: player})
+				return
+			}
+		}
 		room.AddMessage(message)
 		room.NextGuessing(conn)
 		s.broadcast(Response{Type: request.Type, Message: message, Room: room, Player: player})
