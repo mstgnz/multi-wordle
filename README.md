@@ -71,4 +71,4 @@ Type a message in the text box at the bottom and press "Enter" to send a message
 This project is open-source, and contributions are welcome. Feel free to contribute or provide feedback of any kind.
 
 ### License
-This project is licensed under the Apache License. See the [LICENSE](https://github.com/mstgnz/multi-wordle/blob/main/LICENSE) file for more details.
+This project is licensed under the Apache License. See the [LICENSE](LICENSE) file for more details.
