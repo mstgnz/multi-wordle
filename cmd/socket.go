@@ -136,14 +136,14 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 			s.emit(conn, Response{Type: "error", Message: "It's not your turn"})
 			return
 		}
-		message := fmt.Sprintf("player named %s made a prediction.", player.Name)
+		message := "player named " + player.Name + " made a prediction."
 		if room.Length == utf8.RuneCountInString(request.Message) {
 			wordle := strings.ToUpper(request.Message)
 			// If a word is used that is not in the game language, -2 points penalty. The word list is embedded in the project.
 			contains, err := ContainsWord(room.Length, room.Lang, wordle)
 			if !contains || err != nil {
 				player.MinusScore(2)
-				message += fmt.Sprintf(" -2 points for entering a non-existent word.")
+				message += " -2 points for entering a non-existent word."
 			} else {
 				room.CheckWord(wordle, player)
 				if room.Wordle.Word == wordle {
@@ -154,7 +154,7 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 						room.AddMessage(err.Error())
 						s.broadcast(Response{Type: "error", Message: err.Error(), Room: room, Player: player, Players: room.GetPlayers()})
 					} else {
-						message = fmt.Sprintf("Player named %s has guessed the word and moves on to the next match.", player.Name)
+						message = "Player named " + player.Name + " has guessed the word and moves on to the next match."
 						room.AddMessage(message)
 						s.broadcast(Response{Type: "next", Message: message, Room: room, Player: player, Players: room.GetPlayers()})
 					}
@@ -183,7 +183,7 @@ func (s *Socket) wordleHandle(conn *websocket.Conn) {
 func (s *Socket) chatHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
 		player := room.Players[conn]
-		message := fmt.Sprintf("%s: %s", player.Name, request.Message)
+		message := player.Name + ": " + request.Message
 		room.AddMessage(message)
 		s.broadcast(Response{Type: request.Type, Message: request.Message, Room: room, Player: player, Players: room.GetPlayers()})
 	}
@@ -229,7 +229,7 @@ func (s *Socket) startHandle(conn *websocket.Conn) {
 // resetHandle reset the match
 func (s *Socket) resetHandle(conn *websocket.Conn) {
 	if room := ROOMS.FindRoomWithWs(conn); room != nil {
-		message := fmt.Sprintf("The game has been reset.")
+		message := "The game has been reset."
 		room.Start = false
 		room, err := room.ResetMatch()
 		if err != nil {

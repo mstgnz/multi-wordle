@@ -6,6 +6,9 @@ type Request struct {
 	Token    string   `json:"token,omitempty"`
 	Position Position `json:"position,omitempty"`
 	Init     Init     `json:"init,omitempty"`
+	Lang     string   `json:"lang,omitempty"`
+	Limit    int      `json:"limit,omitempty"`
+	Length   int      `json:"length,omitempty"`
 }
 
 type Init struct {

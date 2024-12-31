@@ -1,18 +1,22 @@
 package main
 
 import (
+	"time"
+
 	"golang.org/x/net/websocket"
 )
 
 // Player holds the player's information
 type Player struct {
-	Name       string          `json:"name"`
-	Score      int             `json:"score"`
-	IsGuessing bool            `json:"is_guessing"`
-	Color      string          `json:"color"`
-	Token      string          `json:"token"`
-	Position   Position        `json:"position"`
-	Conn       *websocket.Conn `json:"-"`
+	Name         string          `json:"name"`
+	Score        int             `json:"score"`
+	IsGuessing   bool            `json:"is_guessing"`
+	Color        string          `json:"color"`
+	Token        string          `json:"token"`
+	Position     Position        `json:"position"`
+	Conn         *websocket.Conn `json:"-"`
+	LastActivity time.Time       `json:"last_activity"`
+	UsedLetters  map[string]bool `json:"used_letters"`
 }
 
 func NewPlayer(conn *websocket.Conn) *Player {

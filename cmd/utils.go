@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	crtpto "crypto/rand"
-	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -122,7 +121,7 @@ func GetWordFromFile(file *os.File, lineNo int) (string, error) {
 	if err := scanner.Err(); err != nil {
 		return "", err
 	}
-	return "", errors.New(fmt.Sprintf("Specified line not found: %d", lineNo))
+	return "", fmt.Errorf("specified line not found: %d", lineNo)
 }
 
 // ExistsLetter check if there are letters in the word.
@@ -218,8 +217,7 @@ func InitRoom(request Request) (string, int, int, int, int) {
 // if not, a new login will be created.
 func FindTokenPlayerAndRoom(request Request) (*Room, *Player) {
 	var room *Room
-	var player *Player
-	player = PLAYERS.FindPlayerWithToken(request.Token)
+	player := PLAYERS.FindPlayerWithToken(request.Token)
 	if player != nil {
 		room = ROOMS.FindRoomWithWs(player.Conn)
 	}
