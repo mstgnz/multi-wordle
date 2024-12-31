@@ -30,3 +30,7 @@ cleanC:
 # Run the application inside the Docker container
 exec:
 	docker exec -it $(PROJECT_NAME) /app/tarsCron
+
+live:
+#	find . -type f \( -name '*.go' -o -name '*.gohtml' \) | entr -r sh -c 'make && docker logs --follow $(APP_NAME)'
+	find . -type f \( -name '*.go' -o -name '*.html' \) | entr -r sh -c 'go build -o /tmp/build ./cmd && /tmp/build'

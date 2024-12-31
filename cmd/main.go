@@ -19,7 +19,7 @@ const (
 	EnglishAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	TurkishAlphabet = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
 	MaxConnection   = 48
-	Port            = 3000
+	Port            = 4321
 )
 
 func main() {

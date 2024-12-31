@@ -36,7 +36,7 @@ class MultiWordle {
         this.chatForm.addEventListener("submit", (event) => {
             event.preventDefault()
         })
-        this.socket = new WebSocket("ws://localhost:3000/ws")
+        this.socket = new WebSocket("ws://localhost:4321/ws")
         this.socketProcess()
     }
 
@@ -44,9 +44,9 @@ class MultiWordle {
 
         // on open
         this.socket.onopen = () => {
-            if(this.wordleToken){
+            if (this.wordleToken) {
                 this.send("login")
-            }else{
+            } else {
                 this.initForm.addEventListener("submit", (event) => {
                     event.preventDefault()
                     this.init.lang = this.initForm.querySelector('#room-lang').value.toString()
@@ -62,11 +62,11 @@ class MultiWordle {
         // on message
         this.socket.onmessage = (event) => {
             this.response = JSON.parse(event.data)
-            if(this.response.room){
+            if (this.response.room) {
                 this.room = this.response.room
                 this.title.innerHTML = this.room && this.room.name ? this.room.name.toUpperCase() : ""
             }
-            if(this.response.players){
+            if (this.response.players) {
                 this.players = this.response.players
             }
             this.setPlayer()
@@ -198,7 +198,7 @@ class MultiWordle {
     }
 
     handleDisconnect = () => {
-        if(this.response.player){
+        if (this.response.player) {
             this.players = this.players.filter((p) => p.name !== this.response.player.name);
             this.handleChat()
         }
@@ -235,7 +235,7 @@ class MultiWordle {
     onMessage = (event) => {
         if (event.key === "Enter" && this.input.value.length) {
             const value = this.input.value.trim()
-            if(value.length !== 0){
+            if (value.length !== 0) {
                 this.send("chat", value)
                 this.showBubble(this.player.name, value)
                 this.checkCommand(value)
@@ -253,7 +253,7 @@ class MultiWordle {
             this.player.position.y = event.offsetY - center;
             if (!this.isAnimate) {
                 this.isAnimate = true;
-                this.send("animate", "", {"x": event.offsetX - center, "y": event.offsetY - center})
+                this.send("animate", "", { "x": event.offsetX - center, "y": event.offsetY - center })
                 this.animateElement(this.player)
             }
         }
@@ -294,11 +294,11 @@ class MultiWordle {
                     document.body.style.backgroundImage = `url(${newBg})`
                     break
                 case ":wordle":
-                    if (!this.room.start){
+                    if (!this.room.start) {
                         this.handleError(`Not yet game started. You must first start the game.`)
                         return
                     }
-                    if (!this.player.is_guessing){
+                    if (!this.player.is_guessing) {
                         this.handleError(`It's not your turn.`)
                         return
                     }
@@ -317,13 +317,13 @@ class MultiWordle {
             this.handleError(`The game will start in 5 seconds. You will have ${this.counter} seconds to guess whose turn it is to move.`)
             setTimeout(function () {
                 this.send("start")
-            }.bind(this),5000)
+            }.bind(this), 5000)
         }
         if (command[0] === ":reset") {
             this.handleError("The game will reset in 5 seconds. To start the game you must use the ':start' command.")
             setTimeout(function () {
                 this.send("start")
-            }.bind(this),5000)
+            }.bind(this), 5000)
         }
         if (command[0] === ":change-bg") {
             fetch("https://source.unsplash.com/random/1920x1080").then((response) => {
@@ -352,7 +352,7 @@ class MultiWordle {
     }
 
     addPlayerToGameArea = () => {
-        if(this.players && this.players.length){
+        if (this.players && this.players.length) {
             this.game.innerHTML = ""
             this.players.forEach(player => {
                 this.game.innerHTML += `<div class="circle" id="${player.name}" style="left:${player.position.x}px;top:${player.position.y}px; background-color: ${player.color}">
@@ -444,9 +444,9 @@ class MultiWordle {
         this.right.style.display = "none"
     }
 
-    countDown = ()=> {
+    countDown = () => {
         let player = this.player
-        if(!this.player.is_guessing){
+        if (!this.player.is_guessing) {
             player = this.players.find((player) => player.name !== this.player.name)
         }
         this.countdown.innerHTML = player ? player.name + ": " + this.counter : this.counter
@@ -461,7 +461,7 @@ class MultiWordle {
     }
 
     setPlayer = () => {
-        if(this.response.player && this.player.name === this.response.player.name){
+        if (this.response.player && this.player.name === this.response.player.name) {
             this.player = this.response.player
         }
     }
