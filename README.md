@@ -15,9 +15,9 @@ There is a two-player version with websocket and a scoring system. Each player t
 - [x] 10 points for knowing the word.
 - [x] 5 points for finding the correct letter in the word.  
 - [x] 3 points for finding the letter in the word but misplacing it.  
-- [ ] If a player finds the letter in the word and the location is wrong and the next player sees the letter and locates it correctly, then 2 points from 5-3.  
-- [ ] if there is no letter in the word, no penalty for the first use but -1 point for the second use.  
-- [ ] If a correctly placed letter is not used in the next guess, a penalty of -2 points is awarded.  
+- [x] If a player finds the letter in the word and the location is wrong and the next player sees the letter and locates it correctly, then 2 points from 5-3.  
+- [x] if there is no letter in the word, no penalty for the first use but -1 point for the second use.  
+- [x] If a correctly placed letter is not used in the next guess, a penalty of -2 points is awarded.  
 - [x] If a word is used that is not in the game language, -2 points penalty. The word list is embedded in the project.  
 - [x] If the player whose turn it doesn't answer within the specified time, he/she is penalized -5 points and the turn passes to the next player.
 
